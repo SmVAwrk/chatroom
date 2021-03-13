@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -52,7 +52,7 @@ INSTALLED_APPS = [
     'debug_toolbar',
 
     'custom_user.apps.CustomUserConfig',
-    'chat_app.apps.ChatAppConfig',
+    'user_profile.apps.UserProfileConfig',
 ]
 
 MIDDLEWARE = [
@@ -141,11 +141,16 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+
 # Настройки DRF
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.TokenAuthentication',
+
+        'rest_framework.authentication.SessionAuthentication',
 
         # JWT Djoser auth
         'rest_framework_simplejwt.authentication.JWTAuthentication',
@@ -153,7 +158,11 @@ REST_FRAMEWORK = {
         # Social auth
         'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
         'rest_framework_social_oauth2.authentication.SocialAuthentication',
-    ]
+    ],
+
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10
+
 }
 
 # SMTP
@@ -195,7 +204,7 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.user.get_username',
     'social_core.pipeline.social_auth.associate_by_email',
 
-    # Подключение кастомного пайплайна для создания пользователя
+    # Подключение кастомного пайплайна для создания пользователя через OAuth2
     'custom_user.pipeline.user.create_user',
 
     'social_core.pipeline.social_auth.associate_user',

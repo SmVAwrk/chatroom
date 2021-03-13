@@ -1,8 +1,9 @@
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 
 from chat_app.views import AuthView
-from chatroom_project.settings import DEBUG
+from chatroom_project import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -15,10 +16,15 @@ urlpatterns = [
 
     # Social auth
     path('api/v1/oauth/', include('rest_framework_social_oauth2.urls')),
+
+    # Profile app
+    path('api/v1/', include('user_profile.urls'))
 ]
 
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
 # Подключение Debug toolbar
-if DEBUG:
+if settings.DEBUG:
     import debug_toolbar
 
     urlpatterns += [
