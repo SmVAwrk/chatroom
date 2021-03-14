@@ -42,6 +42,8 @@ INSTALLED_APPS = [
 
     'rest_framework',
 
+    'channels',
+
     # Auth apps
     'rest_framework.authtoken',
     'djoser',
@@ -52,6 +54,7 @@ INSTALLED_APPS = [
     'debug_toolbar',
 
     'custom_user.apps.CustomUserConfig',
+    'chat_app.apps.ChatAppConfig',
     'user_profile.apps.UserProfileConfig',
 ]
 
@@ -211,6 +214,17 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.load_extra_data',
     'social_core.pipeline.user.user_details',
 )
+
+# Django Channels
+ASGI_APPLICATION = "chatroom_project.asgi.application"
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
 
 # Debug toolbar
 INTERNAL_IPS = [
