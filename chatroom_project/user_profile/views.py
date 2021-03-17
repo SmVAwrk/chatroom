@@ -67,9 +67,9 @@ class ProfileUserViewSet(mixins.RetrieveModelMixin,
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class FriendshipRelationFromViewSet(mixins.DestroyModelMixin,
-                                    mixins.ListModelMixin,
-                                    GenericViewSet):
+class FriendshipRelationFromMeViewSet(mixins.DestroyModelMixin,
+                                      mixins.ListModelMixin,
+                                      GenericViewSet):
     permission_classes = (IsAuthenticated,)
     serializer_class = FriendshipRelationListSerializer
 
@@ -79,9 +79,9 @@ class FriendshipRelationFromViewSet(mixins.DestroyModelMixin,
         ).order_by('-id').select_related('creator', 'friend_object')
 
 
-class FriendshipRelationToViewSet(mixins.UpdateModelMixin,
-                                  mixins.ListModelMixin,
-                                  GenericViewSet):
+class FriendshipRelationToMeViewSet(mixins.UpdateModelMixin,
+                                    mixins.ListModelMixin,
+                                    GenericViewSet):
     permission_classes = (IsAuthenticated,)
     serializer_class = FriendshipRelationListSerializer
 

@@ -1,12 +1,12 @@
 from django.urls import path
 from rest_framework.routers import SimpleRouter
 
-from user_profile.views import ProfileUserViewSet, FriendshipRelationFromViewSet, FriendshipRelationToViewSet
+from user_profile.views import ProfileUserViewSet, FriendshipRelationFromMeViewSet, FriendshipRelationToMeViewSet
 
 router = SimpleRouter()
 
 router.register('profile', ProfileUserViewSet)
-router.register('friend-requests-from', FriendshipRelationFromViewSet, basename='friend-requests-from')
-router.register('friend-requests-to', FriendshipRelationToViewSet, basename='friend-requests-to')
+router.register('friend-requests-from-me', FriendshipRelationFromMeViewSet, basename='friend-requests-from-me')
+router.register('friend-requests-to-me', FriendshipRelationToMeViewSet, basename='friend-requests-to-me')
 
 urlpatterns = router.urls
