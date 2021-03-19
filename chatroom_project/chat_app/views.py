@@ -2,7 +2,6 @@ from django.db.models import Q
 from django.shortcuts import render, get_object_or_404
 from rest_framework import mixins, status
 from rest_framework.filters import SearchFilter
-from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -14,7 +13,7 @@ from chat_app.serializers import RoomListSerializer, RoomDetailSerializer, Invit
 from chat_app.services import invite_handler
 
 
-def my_chat_api(request, room_slug):
+def chat_view(request, room_slug):
     return render(request, 'chat_app/my_chat_api.html', context={
         'room_slug': room_slug
     })
