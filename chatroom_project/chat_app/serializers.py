@@ -50,7 +50,7 @@ class InviteSerializer(ModelSerializer):
 
     def validate(self, data):
         room = self.context['room']
-        if data['invite_object'] in room.members.all():
+        if data['invite_object'] in room.members.all() or data['invite_object'] == room.owner:
             raise ValidationError(f'Пользователь {data["invite_object"]} уже числится в комнате {room.slug}')
         if RoomInvite.objects.filter(invite_object=data['invite_object'], room=room):
             raise ValidationError(f'Пользователь {data["invite_object"]} уже приглашен в комнату {room.slug}')

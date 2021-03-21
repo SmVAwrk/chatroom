@@ -17,6 +17,7 @@ from user_profile.services import (
     friend_request_validation, friend_request_handler,
     friend_delete_validation, friend_delete_handler
 )
+from user_profile.tasks import send_friend_notification_task
 
 
 class ProfileUserViewSet(mixins.RetrieveModelMixin,
@@ -51,6 +52,8 @@ class ProfileUserViewSet(mixins.RetrieveModelMixin,
 
         fs_obj = FriendshipRelation.objects.create(creator=request.user, friend_object=user_obj)
         serializer = FriendshipRelationSerializer(fs_obj)
+
+        send_friend_notification_task.delay(user_obj.email, request.user.profile.username)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @action(

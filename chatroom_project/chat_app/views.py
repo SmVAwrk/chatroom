@@ -10,7 +10,8 @@ from rest_framework.viewsets import GenericViewSet, ModelViewSet
 from chat_app.models import Room, RoomInvite
 from chat_app.permissions import IsOwnerOrAdmin
 from chat_app.serializers import RoomListSerializer, RoomDetailSerializer, InviteSerializer, InviteToMeSerializer
-from chat_app.services import invite_handler
+from chat_app.services import invite_handler, get_emails
+from chat_app.tasks import send_invite_notification_task
 
 
 def chat_view(request, room_slug):
@@ -30,7 +31,7 @@ class RoomViewSet(ModelViewSet):
         return RoomDetailSerializer
 
     def get_permissions(self):
-        if self.action in ('list', 'retrieve'):
+        if self.action in ('list', 'retrieve', 'create'):
             return (IsAuthenticated(),)
         return (IsOwnerOrAdmin(),)
 
@@ -45,11 +46,18 @@ class RoomViewSet(ModelViewSet):
 
 class InviteView(APIView):
 
+    permission_classes = (IsOwnerOrAdmin, )
+
     def post(self, request, room_slug):
         room = get_object_or_404(Room, slug=room_slug)
+        self.check_object_permissions(request, room)
         serializer = InviteSerializer(data=request.data, context={'room': room}, many=True)
         serializer.is_valid(raise_exception=True)
         serializer.save(room=room, creator=request.user)
+
+        emails = get_emails(serializer.data)
+        send_invite_notification_task.delay(emails, request.user.profile.username, room.title)
+
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
