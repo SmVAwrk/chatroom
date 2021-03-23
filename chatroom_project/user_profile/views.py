@@ -1,6 +1,10 @@
+import logging
+
+from django.contrib.auth import get_user_model
 from rest_framework import mixins, status
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
+from rest_framework.generics import get_object_or_404
 
 from rest_framework.parsers import FormParser, MultiPartParser, JSONParser
 from rest_framework.permissions import IsAuthenticated
@@ -14,16 +18,26 @@ from user_profile.serializers import (
     FriendshipRelationSerializer, FriendshipRelationListSerializer
 )
 from user_profile.services import (
-    friend_request_validation, friend_request_handler,
-    friend_delete_validation, friend_delete_handler
+    friend_request_handler, friend_delete_validation,
+    friend_delete_handler
 )
 from user_profile.tasks import send_friend_notification_task
+
+logger = logging.getLogger(__name__)
 
 
 class ProfileUserViewSet(mixins.RetrieveModelMixin,
                          mixins.UpdateModelMixin,
                          mixins.ListModelMixin,
                          GenericViewSet):
+    """
+    Набор представлений для получения списка профилей,
+    получения экземпляра профиля и его изменения.
+    Возможен поиск профиля по полю 'username'.
+    Добавлено два дополнительных действия:
+    'add_friend' - для добавления пользователя в друзья,
+    'delete_friend' - для удаления пользователя из друзей.
+    """
     queryset = UserProfile.objects.all().order_by('username').select_related('user')
     lookup_field = 'user'
     parser_classes = (JSONParser, FormParser, MultiPartParser)
@@ -46,14 +60,21 @@ class ProfileUserViewSet(mixins.RetrieveModelMixin,
         methods=('post',),
     )
     def add_friend(self, request, user=None):
-        not_valid, user_obj = friend_request_validation(request.user, user)
-        if not_valid:
-            return not_valid
+        """
+        Кастомное действие для добавления в друзья.
+        При валидных данных создает заявку на добавление друга.
+        """
 
-        fs_obj = FriendshipRelation.objects.create(creator=request.user, friend_object=user_obj)
-        serializer = FriendshipRelationSerializer(fs_obj)
+        user_model = get_user_model()
+        user_obj = get_object_or_404(user_model, id=user)
+        logger.debug(f'Запрос на добавление в друзья от {request.user} к {user_obj}')
 
-        send_friend_notification_task.delay(user_obj.email, request.user.profile.username)
+        data = {'creator': request.user.id, 'friend_object': user_obj.id}
+        serializer = FriendshipRelationSerializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        # send_friend_notification_task.delay(user_obj.email, request.user.profile.username)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @action(
@@ -62,9 +83,14 @@ class ProfileUserViewSet(mixins.RetrieveModelMixin,
         methods=('delete',),
     )
     def delete_friend(self, request, user=None):
+        """
+        Кастомное действие для удаления друга.
+        При валидных данных удаляет пользователя из друзей.
+        """
         not_valid, user_obj = friend_delete_validation(request.user, user)
         if not_valid:
             return not_valid
+        logger.debug(f'Запрос на удаление из друзей от {request.user} к {user_obj}')
 
         friend_delete_handler(request.user, user_obj)
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -73,6 +99,10 @@ class ProfileUserViewSet(mixins.RetrieveModelMixin,
 class FriendshipRelationFromMeViewSet(mixins.DestroyModelMixin,
                                       mixins.ListModelMixin,
                                       GenericViewSet):
+    """
+    Набор представлений для получения исходящих запрос на дружбу
+    и удаления экземпляра запроса.
+    """
     permission_classes = (IsAuthenticated,)
     serializer_class = FriendshipRelationListSerializer
 
@@ -85,6 +115,10 @@ class FriendshipRelationFromMeViewSet(mixins.DestroyModelMixin,
 class FriendshipRelationToMeViewSet(mixins.UpdateModelMixin,
                                     mixins.ListModelMixin,
                                     GenericViewSet):
+    """
+    Набор представлений для получения входящих запрос на дружбу
+    и изменения экземпляра запроса.
+    """
     permission_classes = (IsAuthenticated,)
     serializer_class = FriendshipRelationListSerializer
 
@@ -94,7 +128,7 @@ class FriendshipRelationToMeViewSet(mixins.UpdateModelMixin,
         ).order_by('-id').select_related('creator', 'friend_object')
 
     def perform_update(self, serializer):
+        """Добавление обработки запроса при его изменении"""
         serializer.save()
         friend_request = self.get_object()
         friend_request_handler(friend_request)
-

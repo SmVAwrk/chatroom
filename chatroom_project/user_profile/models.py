@@ -1,3 +1,4 @@
+import logging
 import re
 
 from django.db import models
@@ -6,12 +7,24 @@ from django.dispatch import receiver
 
 from chatroom_project import settings
 
+logger = logging.getLogger(__name__)
+
 
 def upload_to(instance, filename):
+    """
+    Функция для генерации пути до файла.
+    :param instance: объект профиля
+    :param filename: имя загружаемого файла
+    :return: 'путь_до_файла': str
+    """
     return f'avatars/uid-{instance.user.id}/{filename}'
 
 
 class UserProfile(models.Model):
+    """
+    Модель профиля пользователя.
+    Связь 1 к 1 с моделью пользователя.
+    """
     user = models.OneToOneField(settings.AUTH_USER_MODEL, verbose_name='Пользователь',
                                 on_delete=models.CASCADE, related_name='profile')
     username = models.CharField(max_length=128, verbose_name='Никнейм')
@@ -29,18 +42,20 @@ class UserProfile(models.Model):
 
 
 @receiver(signal=post_save, sender=settings.AUTH_USER_MODEL)
-def create_user_profile(sender, instance, created, **kwargs):
-    username = re.search(r'^(\w+)@', instance.email)
+def create_or_update_user_profile(sender, instance, created, **kwargs):
+    """
+    Сигнал для создания связанного профиля при создании пользователя
+    или обновления профиля при обновлении пользователя.
+    """
     if created:
+        username = re.search(r'^(\w+)@', instance.email)
         UserProfile.objects.create(user=instance, username=username.group(1))
-
-
-@receiver(signal=post_save, sender=settings.AUTH_USER_MODEL)
-def save_user_profile(sender, instance, **kwargs):
+        logger.debug(f'Создание профиля для пользователя {instance.email}')
     instance.profile.save()
 
 
 class FriendshipRelation(models.Model):
+    """Модель заявки на добавление в друзья."""
     creator = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name='Запрос от',
                                 on_delete=models.CASCADE, related_name='friend_inits')
     friend_object = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name='Запрос к',

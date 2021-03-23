@@ -1,4 +1,3 @@
-from django.urls import path
 from rest_framework.routers import SimpleRouter
 
 from user_profile.views import ProfileUserViewSet, FriendshipRelationFromMeViewSet, FriendshipRelationToMeViewSet

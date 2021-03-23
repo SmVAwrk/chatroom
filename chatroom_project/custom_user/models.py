@@ -26,7 +26,7 @@ class CustomUserManager(BaseUserManager):
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
-        logger.info(f'Создан новый пользователь: {user}')
+        logger.debug(f'Создан новый пользователь: {user}')
         return user
 
     def create_user(self, email, password=None, **extra_fields):

@@ -25,7 +25,7 @@ def create_user(strategy, details, backend, user=None, *args, **kwargs):
     # Генерация email, в случае его отсутствия
     if not fields.get('email', None):
         fields['email'] = fields['username'].lower() + '@' + backend.name + '.oauth'
-        logger.info(f'Генерация email на основе username - {fields["email"]}')
+        logger.debug(f'Генерация email на основе username - {fields["email"]}')
 
     return {
         'is_new': True,
