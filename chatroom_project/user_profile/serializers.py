@@ -37,12 +37,12 @@ class FriendshipRelationSerializer(ModelSerializer):
 
         if data['creator'] == data['friend_object']:
             raise ValidationError('Невозможно отправить запрос самому себе.')
-        if data['creator'].profile.friends.filter(id=data['friend_object'].id).select_related('profile'):
+        if data['creator'].profile.friends.filter(id=data['friend_object'].id):
             raise ValidationError('Пользователь уже у вас в друзьях.')
         if FriendshipRelation.objects.filter(
                 creator__in=[data['creator'], data['friend_object']],
                 friend_object__in=[data['creator'], data['friend_object']]
-        ).select_related('creator', 'friend_object'):
+        ):
             raise ValidationError('Отношение уже существует.')
         return data
 

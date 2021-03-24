@@ -17,6 +17,8 @@ def upload_to(instance, filename):
     :param filename: имя загружаемого файла
     :return: 'путь_до_файла': str
     """
+    if instance.user.email == 'test@image.jpeg':
+        return f'avatars/test/uid-{instance.user.id}/{filename}'
     return f'avatars/uid-{instance.user.id}/{filename}'
 
 

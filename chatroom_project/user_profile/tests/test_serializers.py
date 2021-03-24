@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase
 from rest_framework.exceptions import ValidationError
 
-from user_profile.models import UserProfile, FriendshipRelation
+from user_profile.models import FriendshipRelation
 from user_profile.serializers import ProfileListSerializer, ProfileDetailSerializer, FriendshipRelationSerializer, \
     FriendshipRelationListSerializer
 

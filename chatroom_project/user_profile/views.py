@@ -38,7 +38,6 @@ class ProfileUserViewSet(mixins.RetrieveModelMixin,
     'add_friend' - для добавления пользователя в друзья,
     'delete_friend' - для удаления пользователя из друзей.
     """
-    queryset = UserProfile.objects.all().order_by('username').select_related('user')
     lookup_field = 'user'
     parser_classes = (JSONParser, FormParser, MultiPartParser)
     filter_backends = [SearchFilter, ]
@@ -48,6 +47,11 @@ class ProfileUserViewSet(mixins.RetrieveModelMixin,
         if self.action in ('update', 'partial_update'):
             return (IsOwnerOrAdmin(),)
         return (IsAuthenticated(),)
+
+    def get_queryset(self):
+        if self.action == 'list':
+            return UserProfile.objects.all().order_by('username').select_related('user')
+        return UserProfile.objects.all().select_related('user').prefetch_related('friends')
 
     def get_serializer_class(self):
         if self.action == 'list':
@@ -87,7 +91,7 @@ class ProfileUserViewSet(mixins.RetrieveModelMixin,
         Кастомное действие для удаления друга.
         При валидных данных удаляет пользователя из друзей.
         """
-        not_valid, user_obj = friend_delete_validation(request.user, user)
+        not_valid, user_obj = friend_delete_validation(request.user, int(user))
         if not_valid:
             return not_valid
         logger.debug(f'Запрос на удаление из друзей от {request.user} к {user_obj}')
