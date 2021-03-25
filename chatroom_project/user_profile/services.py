@@ -36,12 +36,16 @@ def friend_request_handler(friend_request):
     assert isinstance(friend_request, FriendshipRelation)
 
     if friend_request.is_accepted:
+        # Если запрос принят, то пользователи добавляются друг другу в друзья,
+        # и экземпляр запроса удаляется
         friend_request.friend_object.profile.friends.add(friend_request.creator)
         friend_request.creator.profile.friends.add(friend_request.friend_object)
 
+        # Отправка оповещения на почту
         # send_accept_notification_task.delay(friend_request.creator.email, friend_request.friend_object.profile.username)
         friend_request.delete()
     elif friend_request.is_accepted is False:
+        # Если запрос отклонен, экземпляр запроса просто удаляется
         friend_request.delete()
 
 

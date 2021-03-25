@@ -15,12 +15,18 @@ from chat_app.tasks import send_invite_notification_task
 
 
 def chat_view(request, room_slug):
+    """Представление-функция для отладки WS."""
     return render(request, 'chat_app/my_chat_api.html', context={
         'room_slug': room_slug
     })
 
 
 class RoomViewSet(ModelViewSet):
+    """
+    Набор представлений для просмотра списка своих чат-комнат,
+    просмотра экземпляра чат-комнаты, создания, изменения или удаления.
+    Возможен поиск профиля по полям 'title' и 'slug'.
+    """
     lookup_field = 'slug'
     filter_backends = [SearchFilter, ]
     search_fields = ['title', 'slug']
@@ -41,22 +47,26 @@ class RoomViewSet(ModelViewSet):
         ).order_by('-created_at').distinct().select_related('owner').prefetch_related('members')
 
     def perform_create(self, serializer):
+        """Сохранение пользователя как как владельца комнаты."""
         serializer.save(owner=self.request.user)
 
 
 class InviteView(APIView):
+    """Представление-класс для создания приглашений в комнату."""
 
     permission_classes = (IsOwnerOrAdmin, )
 
     def post(self, request, room_slug):
+        """Функция обработки POST-запроса."""
         room = get_object_or_404(Room, slug=room_slug)
         self.check_object_permissions(request, room)
         serializer = InviteSerializer(data=request.data, context={'room': room}, many=True)
         serializer.is_valid(raise_exception=True)
         serializer.save(room=room, creator=request.user)
 
+        # Отправка оповещений на почту
         emails = get_emails(serializer.data)
-        send_invite_notification_task.delay(emails, request.user.profile.username, room.title)
+        # send_invite_notification_task.delay(emails, request.user.profile.username, room.title)
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -64,6 +74,7 @@ class InviteView(APIView):
 class InviteFromMe(mixins.ListModelMixin,
                    mixins.DestroyModelMixin,
                    GenericViewSet):
+    """Набор представлений для просмотра исходящих приглашений."""
     permission_classes = (IsAuthenticated,)
     serializer_class = InviteSerializer
 
@@ -74,10 +85,12 @@ class InviteFromMe(mixins.ListModelMixin,
 class InviteToMe(mixins.ListModelMixin,
                  mixins.UpdateModelMixin,
                  GenericViewSet):
+    """Набор представлений для просмотра входящих приглашений."""
     permission_classes = (IsAuthenticated,)
     serializer_class = InviteToMeSerializer
 
     def perform_update(self, serializer):
+        """Обработка приглашения при его обновлении."""
         serializer.save()
         invite = self.get_object()
         invite_handler(invite)

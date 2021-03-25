@@ -8,6 +8,7 @@ from rest_framework_simplejwt.authentication import JWTTokenUserAuthentication
 
 @database_sync_to_async
 def get_user_jwt(validated_token):
+    """Функция для проверки JWT."""
     try:
         return JWTTokenUserAuthentication().get_user(validated_token=validated_token)
     except Exception:
@@ -16,6 +17,7 @@ def get_user_jwt(validated_token):
 
 @database_sync_to_async
 def get_user_token(token_key):
+    """Функция для проверки токена."""
     try:
         token = Token.objects.get(key=token_key)
         return token.user
@@ -24,6 +26,7 @@ def get_user_token(token_key):
 
 
 class JWTOrTokenAuthMiddleware(BaseMiddleware):
+    """Кастомная AuthMiddleware для аутентификации при помощи JWT или токена."""
 
     def __init__(self, inner):
         self.inner = inner

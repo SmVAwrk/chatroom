@@ -1,3 +1,4 @@
+import logging
 from hashlib import md5
 
 from django.db import models, IntegrityError
@@ -6,7 +7,11 @@ from slugify import slugify
 from chatroom_project import settings
 
 
+logger = logging.getLogger(__name__)
+
+
 class Room(models.Model):
+    """Модель чат-комнаты."""
     title = models.CharField(max_length=128, verbose_name='Название')
     slug = models.SlugField(max_length=128, verbose_name='URL', unique=True, blank=True)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name='Владелец',
@@ -19,14 +24,17 @@ class Room(models.Model):
         return f'Комната {self.owner} со слагом {self.slug}'
 
     def get_members_num(self):
+        """Функция для подсчёта количества участников комнаты."""
         return self.members.all().count() + 1
 
     def save(self, *args, **kwargs):
+        """Автогенерация слага, если он не был указан."""
         if not self.slug:
-            self.slug = slugify(self.title) + '-' + self.pk
+            self.slug = slugify(self.title) + '-id' + self.pk
             try:
                 super().save(*args, **kwargs)
-            except IntegrityError:
+            except IntegrityError as exc:
+                logger.debug(f'IntegrityError: {exc}; ошибка при сохранении в базу данных')
                 self.slug = md5(bytes(str(self.created_at), encoding='utf8')).hexdigest()
                 super().save(*args, **kwargs)
         else:
@@ -34,6 +42,7 @@ class Room(models.Model):
 
 
 class Message(models.Model):
+    """Модель сообщений в чат-комнатах."""
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
                                verbose_name='Автор', related_name='author_messages')
     room = models.ForeignKey(Room, on_delete=models.CASCADE,
@@ -46,6 +55,7 @@ class Message(models.Model):
 
 
 class RoomInvite(models.Model):
+    """Модель приглашений в чат-комнату."""
     creator = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name='Приглашение от',
                                 on_delete=models.CASCADE, related_name='invite_inits')
     invite_object = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name='Приглашение к',

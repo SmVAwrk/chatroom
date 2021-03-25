@@ -3,8 +3,10 @@ from django.test import TestCase
 from rest_framework.exceptions import ValidationError
 
 from user_profile.models import FriendshipRelation
-from user_profile.serializers import ProfileListSerializer, ProfileDetailSerializer, FriendshipRelationSerializer, \
-    FriendshipRelationListSerializer
+from user_profile.serializers import (
+    ProfileListSerializer, ProfileDetailSerializer,
+    FriendshipRelationSerializer, FriendshipRelationListSerializer
+)
 
 
 class ProfileListSerializerTestCase(TestCase):

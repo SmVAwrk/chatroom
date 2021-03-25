@@ -78,6 +78,7 @@ class ProfileUserViewSet(mixins.RetrieveModelMixin,
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
+        # Отправка оповещения на почту
         # send_friend_notification_task.delay(user_obj.email, request.user.profile.username)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
