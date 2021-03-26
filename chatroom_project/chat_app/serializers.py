@@ -14,22 +14,17 @@ logger = logging.getLogger(__name__)
 class RoomListSerializer(ModelSerializer):
     """Сериализатор для обработки списка чат-комнат"""
     members_num = ReadOnlyField(source='get_members_num')
-    # slug = SlugField(allow_blank=True)
 
     class Meta:
         model = Room
         fields = ('title', 'slug', 'owner', 'members_num', 'members')
-
-    # def validate_slug(self, value):
-    #     if re.match(r'[-|_][i|I][d|D]\d+$', value):
-    #         raise ValidationError('Такой тип окончания в поле slug зарезервирован.')
 
 
 class RoomDetailSerializer(ModelSerializer):
     """Сериализатор для обработки экземпляра чат-комнаты"""
     owner = PrimaryKeyRelatedField(read_only=True)
     members_num = ReadOnlyField(source='get_members_num')
-    slug = SlugField(allow_blank=True)
+    slug = SlugField(allow_blank=True, required=False)
 
     class Meta:
         model = Room
@@ -37,14 +32,14 @@ class RoomDetailSerializer(ModelSerializer):
 
     def validate_slug(self, value):
         """Валидация поля slug."""
-        if re.match(r'[-|_][i|I][d|D]\d+$', value):
-            logger.debug(f'Пользователь {self.owner} попытался создать зарезервированный slug.')
+        if re.search(r'[-|_][i|I][d|D]\d+$', value):
+            logger.debug(f'Пользователь {self.instance.owner} попытался создать зарезервированный slug.')
             raise ValidationError('Такой тип окончания в поле slug зарезервирован.')
         return value
 
     def validate(self, data):
         """Валидация входных данных."""
-        if 'members' in data:
+        if data.get('members'):
             members_before = {user.id for user in self.instance.members.all()}
             members_after = {user.id for user in data['members']}
             if not members_after.issubset(members_before):
@@ -93,7 +88,8 @@ class InviteToMeSerializer(ModelSerializer):
 
 class MessageSerializer(ModelSerializer):
     """Сериализатор для обработки сообщений."""
+    room = ReadOnlyField(source='room.slug')
 
     class Meta:
         model = Message
-        fields = '__all__'
+        exclude = ('id', )

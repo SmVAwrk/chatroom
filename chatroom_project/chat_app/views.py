@@ -1,24 +1,22 @@
 from django.db.models import Q
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render
 from rest_framework import mixins, status
 from rest_framework.filters import SearchFilter
+from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
 from chat_app.models import Room, RoomInvite
-from chat_app.permissions import IsOwnerOrAdmin
-from chat_app.serializers import RoomListSerializer, RoomDetailSerializer, InviteSerializer, InviteToMeSerializer
-from chat_app.services import invite_handler, get_emails
+from chat_app.permissions import IsOwnerOrAdmin, IsOwnerOrMember
+from chat_app.serializers import (
+    RoomListSerializer, RoomDetailSerializer,
+    InviteSerializer, InviteToMeSerializer,
+    MessageSerializer
+)
+from chat_app.services import invite_handler, get_emails, message_filter
 from chat_app.tasks import send_invite_notification_task
-
-
-def chat_view(request, room_slug):
-    """Представление-функция для отладки WS."""
-    return render(request, 'chat_app/my_chat_api.html', context={
-        'room_slug': room_slug
-    })
 
 
 class RoomViewSet(ModelViewSet):
@@ -71,20 +69,20 @@ class InviteView(APIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-class InviteFromMe(mixins.ListModelMixin,
-                   mixins.DestroyModelMixin,
-                   GenericViewSet):
+class InviteFromMeView(mixins.ListModelMixin,
+                       mixins.DestroyModelMixin,
+                       GenericViewSet):
     """Набор представлений для просмотра исходящих приглашений."""
     permission_classes = (IsAuthenticated,)
     serializer_class = InviteSerializer
 
     def get_queryset(self):
-        return RoomInvite.objects.filter(creator=self.request.user).order_by('-id').select_related('creator')
+        return RoomInvite.objects.filter(creator=self.request.user).order_by('-id').select_related('creator', 'room')
 
 
-class InviteToMe(mixins.ListModelMixin,
-                 mixins.UpdateModelMixin,
-                 GenericViewSet):
+class InviteToMeView(mixins.ListModelMixin,
+                     mixins.UpdateModelMixin,
+                     GenericViewSet):
     """Набор представлений для просмотра входящих приглашений."""
     permission_classes = (IsAuthenticated,)
     serializer_class = InviteToMeSerializer
@@ -98,4 +96,31 @@ class InviteToMe(mixins.ListModelMixin,
     def get_queryset(self):
         return RoomInvite.objects.filter(
             invite_object=self.request.user
-        ).order_by('-id').select_related('invite_object')
+        ).order_by('-id').select_related('invite_object', 'room')
+
+
+class LazyLoadMessagesView(APIView):
+    """Представление для ленивой загрузки сообщений."""
+    permission_classes = (IsOwnerOrMember,)
+
+    def get(self, request, room_slug):
+        """Функция обработки GET-запроса."""
+        room = get_object_or_404(Room, slug=room_slug)
+        self.check_object_permissions(request, room)
+
+        messages, no_more_data = message_filter(request, room_slug)
+        serializer = MessageSerializer(messages, many=True)
+        return Response(
+            {
+                'messages': serializer.data,
+                'no_more_data': no_more_data
+            },
+            status=status.HTTP_200_OK
+        )
+
+
+# def chat_view(request, room_slug):
+#     """Представление-функция для отладки WS."""
+#     return render(request, 'chat_app/my_chat.html', context={
+#         'room_slug': room_slug
+#     })

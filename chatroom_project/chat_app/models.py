@@ -29,16 +29,17 @@ class Room(models.Model):
 
     def save(self, *args, **kwargs):
         """Автогенерация слага, если он не был указан."""
+        super().save(*args, **kwargs)
         if not self.slug:
-            self.slug = slugify(self.title) + '-id' + self.pk
-            try:
-                super().save(*args, **kwargs)
-            except IntegrityError as exc:
-                logger.debug(f'IntegrityError: {exc}; ошибка при сохранении в базу данных')
-                self.slug = md5(bytes(str(self.created_at), encoding='utf8')).hexdigest()
-                super().save(*args, **kwargs)
-        else:
-            super().save(*args, **kwargs)
+            self.slug = slugify(self.title) + '-id' + str(self.pk)
+            # try:
+            #     super().save(*args, **kwargs)
+            # except IntegrityError as exc:
+            #     logger.debug(f'IntegrityError: {exc}; ошибка при сохранении в базу данных')
+            #     self.slug = md5(bytes(str(self.created_at), encoding='utf8')).hexdigest()
+            #     super().save(*args, **kwargs)
+        # else:
+        #     super().save(*args, **kwargs)
 
 
 class Message(models.Model):
@@ -51,7 +52,7 @@ class Message(models.Model):
     created_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f'Сообщение {self.author} в комнате {self.room}'
+        return f'{self.pk}. Сообщение {self.author} в комнате {self.room}'
 
 
 class RoomInvite(models.Model):
