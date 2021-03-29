@@ -3,7 +3,6 @@ import logging
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
 from django.core.mail import send_mail
-from django.utils.translation import ugettext_lazy as _
 from django.db import models
 
 logger = logging.getLogger(__name__)
@@ -51,10 +50,10 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     Кастомная модель пользователя.
     В качестве основного поля выбран email
     """
-    email = models.EmailField(_('e-mail address'), unique=True)
-    date_joined = models.DateTimeField(_('date joined'), auto_now_add=True)
-    is_active = models.BooleanField(_('active'), default=True)
-    is_staff = models.BooleanField(_('staff status'), default=False)
+    email = models.EmailField('e-mail address', unique=True)
+    date_joined = models.DateTimeField('date joined', auto_now_add=True)
+    is_active = models.BooleanField('active', default=True)
+    is_staff = models.BooleanField('staff status', default=False)
 
     objects = CustomUserManager()
 

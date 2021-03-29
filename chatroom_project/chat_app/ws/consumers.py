@@ -14,9 +14,11 @@ from chat_app.serializers import MessageSerializer
 logger = logging.getLogger(__name__)
 
 
-class AsyncAPIChatConsumer(AsyncWebsocketConsumer):
+class AsyncChatConsumer(AsyncWebsocketConsumer):
     """Async Consumer для обработки WS-соединения."""
     session_storage = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)
+
+    # session_storage.delete('users_test-slug')
 
     async def connect(self):
         """Функция-обработчик соединения."""
@@ -80,6 +82,7 @@ class AsyncAPIChatConsumer(AsyncWebsocketConsumer):
             self.room_group_name,
             self.channel_name
         )
+        logger.debug(f"Все удалили {self.scope['user']}")
 
     async def receive(self, text_data):
         """Функция для обработки принятого сигнала."""
