@@ -1,8 +1,9 @@
-from django.conf.urls.static import static
 from django.contrib import admin
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.urls import path, include
 
 from chatroom_project import settings
+from .yasg import urlpatterns as docs_url
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -21,8 +22,9 @@ urlpatterns = [
     # Chat app
     path('api/v1/chat/', include('chat_app.urls')),
 ]
+urlpatterns += staticfiles_urlpatterns()
 
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns += docs_url
 
 # Подключение Debug toolbar
 if settings.DEBUG:

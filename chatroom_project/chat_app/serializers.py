@@ -5,6 +5,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.fields import ReadOnlyField, SlugField
 from rest_framework.relations import PrimaryKeyRelatedField
 from rest_framework.serializers import ModelSerializer, ListSerializer
+from rest_framework.validators import UniqueValidator
 
 from chat_app.models import Room, RoomInvite, Message
 
@@ -24,7 +25,13 @@ class RoomDetailSerializer(ModelSerializer):
     """Сериализатор для обработки экземпляра чат-комнаты"""
     owner = PrimaryKeyRelatedField(read_only=True)
     members_num = ReadOnlyField(source='get_members_num')
-    slug = SlugField(allow_blank=True, required=False)
+    slug = SlugField(
+        allow_blank=True,
+        required=False,
+        validators=[
+            UniqueValidator(queryset=Room.objects.all().select_related('owner').prefetch_related('members'))
+        ]
+    )
 
     class Meta:
         model = Room
@@ -32,14 +39,17 @@ class RoomDetailSerializer(ModelSerializer):
 
     def validate_slug(self, value):
         """Валидация поля slug."""
-        if re.search(r'[-|_][i|I][d|D]\d+$', value):
-            logger.debug(f'Пользователь {self.instance.owner} попытался создать зарезервированный slug.')
-            raise ValidationError('Такой тип окончания в поле slug зарезервирован.')
+        if re.search(r'-[i|I][d|D]-\w+$', value):
+            if not self.instance or self.instance.slug != value:
+                logger.debug(f'Пользователь попытался создать зарезервированный slug.')
+                raise ValidationError('Такой тип окончания в поле slug зарезервирован.')
         return value
 
     def validate(self, data):
         """Валидация входных данных."""
         if data.get('members'):
+            if not self.instance:
+                raise ValidationError('Нельзя добавлять участников при создании комнаты.')
             members_before = {user.id for user in self.instance.members.all()}
             members_after = {user.id for user in data['members']}
             if not members_after.issubset(members_before):

@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 class CustomUserManager(BaseUserManager):
     """
-    Менеджер для запросов к модели CustomUser
+    Менеджер для запросов к модели CustomUser.
     """
     use_in_migrations = True
 
@@ -48,7 +48,7 @@ class CustomUserManager(BaseUserManager):
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     """
     Кастомная модель пользователя.
-    В качестве основного поля выбран email
+    В качестве основного поля выбран email.
     """
     email = models.EmailField('e-mail address', unique=True)
     date_joined = models.DateTimeField('date joined', auto_now_add=True)

@@ -167,8 +167,8 @@ class RoomViewSetTestCase(APITestCase):
 
         self.assertEqual(Room.objects.all().count(), 0)
         response = self.client.post(url, data=input_data)
-        room_id = Room.objects.all().first().id
-        expected_slug = f'test-title-1-id{room_id}'
+        room_uuid = Room.objects.all().first().slug.split('-')[-1]
+        expected_slug = f'test-title-1-id-{room_uuid}'
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data['slug'], expected_slug)

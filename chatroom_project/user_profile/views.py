@@ -105,7 +105,7 @@ class FriendshipRelationFromMeViewSet(mixins.DestroyModelMixin,
                                       mixins.ListModelMixin,
                                       GenericViewSet):
     """
-    Набор представлений для получения исходящих запрос на дружбу
+    Набор представлений для получения исходящих запросов на дружбу
     и удаления экземпляра запроса.
     """
     permission_classes = (IsAuthenticated,)
@@ -121,7 +121,7 @@ class FriendshipRelationToMeViewSet(mixins.UpdateModelMixin,
                                     mixins.ListModelMixin,
                                     GenericViewSet):
     """
-    Набор представлений для получения входящих запрос на дружбу
+    Набор представлений для получения входящих запросов на дружбу
     и изменения экземпляра запроса.
     """
     permission_classes = (IsAuthenticated,)

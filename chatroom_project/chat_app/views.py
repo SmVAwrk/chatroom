@@ -52,7 +52,7 @@ class RoomViewSet(ModelViewSet):
 class InviteView(APIView):
     """Представление-класс для создания приглашений в комнату."""
 
-    permission_classes = (IsOwnerOrAdmin, )
+    permission_classes = (IsOwnerOrAdmin,)
 
     def post(self, request, room_slug):
         """Функция обработки POST-запроса."""
@@ -104,7 +104,7 @@ class LazyLoadMessagesView(APIView):
     permission_classes = (IsOwnerOrMember,)
 
     def get(self, request, room_slug):
-        """Функция обработки GET-запроса."""
+        """Функция обработки GET-запроса LazyLoad."""
         room = get_object_or_404(Room, slug=room_slug)
         self.check_object_permissions(request, room)
 
@@ -118,9 +118,8 @@ class LazyLoadMessagesView(APIView):
             status=status.HTTP_200_OK
         )
 
-
-# def chat_view(request, room_slug):
-#     """Представление-функция для отладки WS."""
-#     return render(request, 'chat_app/my_chat.html', context={
-#         'room_slug': room_slug
-#     })
+def chat_view(request, room_slug):
+    """Представление-функция для отладки WS."""
+    return render(request, 'chat_app/my_chat.html', context={
+        'room_slug': room_slug
+    })

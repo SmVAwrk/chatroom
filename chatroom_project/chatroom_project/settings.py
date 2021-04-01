@@ -19,47 +19,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 't7bsfx8xyn91)jl#s(%u#-#vn0jm8u==i2hko5z)1jpnb==q1r'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DJANGO_DEBUG', 'TRUE') == 'TRUE'
 
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': True,
-    'formatters': {
-        'console': {
-            'format': '%(name)-12s %(levelname)-8s %(message)s'
-        },
-        'file': {
-            'format': '%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
-            'datefmt': '%d-%m-%Y %H:%M:%S'
-        }
-    },
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-            'formatter': 'console'
-        },
-        'file': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'formatter': 'file',
-            'filename': 'debug.log'
-        }
-    },
-    'loggers': {
-        '': {
-            'level': 'DEBUG',
-            'handlers': ['console', 'file']
-        }
-    }
-}
-
-ALLOWED_HOSTS = []
-
-# Подключение собственной модели пользователей
-AUTH_USER_MODEL = 'custom_user.CustomUser'
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 INSTALLED_APPS = [
@@ -69,6 +34,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'drf_yasg',
 
     'rest_framework',
 
@@ -88,6 +55,9 @@ INSTALLED_APPS = [
     'user_profile.apps.UserProfileConfig',
 ]
 
+# Подключение собственной модели пользователей
+AUTH_USER_MODEL = 'custom_user.CustomUser'
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -97,9 +67,15 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
+    # Обслуживание статики при DEBUG = False (whitenoise)
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+
     # Debug toolbar
     'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
+
+# Обслуживание статики при DEBUG = False (whitenoise)
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 ROOT_URLCONF = 'chatroom_project.urls'
 
@@ -127,11 +103,11 @@ WSGI_APPLICATION = 'chatroom_project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'chatroom_db',
-        'USER': 'test_user',
-        'PASSWORD': '',
-        'HOST': '127.0.0.1',
-        'PORT': '',
+        'NAME': os.environ.get('POSTGRES_DB', 'chatroom_db'),
+        'USER': os.environ.get('POSTGRES_USER', 'test_user'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', '123456'),
+        'HOST': os.environ.get('POSTGRES_HOST', '127.0.0.1'),
+        'PORT': os.environ.get('POSTGRES_PORT', ''),
     }
 }
 
@@ -170,6 +146,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
@@ -189,23 +166,27 @@ REST_FRAMEWORK = {
         'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
         'rest_framework_social_oauth2.authentication.SocialAuthentication',
     ],
-
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+    ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10
-
 }
 
 # SMTP
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = ''
-EMAIL_HOST_PASSWORD = ''
+EMAIL_HOST = os.environ.get('DJANGO_EMAIL_HOST')
+EMAIL_HOST_USER = os.environ.get('DJANGO_EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('DJANGO_EMAIL_HOST_PASSWORD')
 
 # Настройки Djoser
 DJOSER = {
     'USER_CREATE_PASSWORD_RETYPE': True,
     'SEND_ACTIVATION_EMAIL': True,
+    'PASSWORD_RESET_CONFIRM_URL': '/auth/password/reset/confirm/{uid}/{token}',
+    'USERNAME_RESET_CONFIRM_URL': '/auth/email/reset/confirm/{uid}/{token}',
+    'ACTIVATION_URL': '/auth/activate/{uid}/{token}',
     'SERIALIZERS': {},
 }
 
@@ -216,8 +197,8 @@ SIMPLE_JWT = {
 
 # Social auth
 SOCIAL_AUTH_USER_MODEL = 'custom_user.CustomUser'
-SOCIAL_AUTH_GITHUB_KEY = ''
-SOCIAL_AUTH_GITHUB_SECRET = ''
+SOCIAL_AUTH_GITHUB_KEY = os.environ.get('DJANGO_SOCIAL_AUTH_GITHUB_KEY')
+SOCIAL_AUTH_GITHUB_SECRET = os.environ.get('DJANGO_SOCIAL_AUTH_GITHUB_SECRET')
 
 AUTHENTICATION_BACKENDS = (
     'social_core.backends.github.GithubOAuth2',
@@ -240,24 +221,66 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.user.user_details',
 )
 
+# Redis
+REDIS_HOST = os.environ.get('REDIS_HOST', 'localhost')
+REDIS_PORT = os.environ.get('REDIS_PORT', 6379)
+
 # Django Channels
 ASGI_APPLICATION = "chatroom_project.asgi.application"
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            "hosts": [('127.0.0.1', 6379)],
+            "hosts": [(REDIS_HOST, REDIS_PORT)],
         },
     },
 }
 
 # Celery
-CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_BROKER_URL = f'redis://{REDIS_HOST}:{REDIS_PORT}/0'
 CELERY_TRANSPORT_OPTIONS = {'visibility_timeout': 3600}
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = f'redis://{REDIS_HOST}:{REDIS_PORT}/0'
 
 
 # Debug toolbar
 INTERNAL_IPS = [
     '127.0.0.1',
 ]
+
+# Логирование
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'console': {
+            'format': '%(name)-12s %(levelname)-8s %(message)s'
+        },
+        'file': {
+            'format': '%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
+            'datefmt': '%d-%m-%Y %H:%M:%S'
+        }
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'console'
+        },
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'formatter': 'file',
+            'filename': 'debug.log'
+        }
+    },
+    'loggers': {
+        '': {
+            'level': 'DEBUG',
+            'handlers': ['console', 'file']
+        },
+        # 'django.db.backends': {
+        #     'level': 'DEBUG',
+        #     'handlers': ['console', ],
+        # },
+
+    }
+}

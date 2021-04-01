@@ -1,4 +1,5 @@
 import logging
+import uuid
 from hashlib import md5
 
 from django.db import models, IntegrityError
@@ -29,17 +30,10 @@ class Room(models.Model):
 
     def save(self, *args, **kwargs):
         """Автогенерация слага, если он не был указан."""
-        super().save(*args, **kwargs)
         if not self.slug:
-            self.slug = slugify(self.title) + '-id' + str(self.pk)
-            # try:
-            #     super().save(*args, **kwargs)
-            # except IntegrityError as exc:
-            #     logger.debug(f'IntegrityError: {exc}; ошибка при сохранении в базу данных')
-            #     self.slug = md5(bytes(str(self.created_at), encoding='utf8')).hexdigest()
-            #     super().save(*args, **kwargs)
-        # else:
-        #     super().save(*args, **kwargs)
+            self.slug = slugify(self.title) + '-id-' + str(uuid.uuid4()).split('-')[0]
+        super().save(*args, **kwargs)
+
 
 
 class Message(models.Model):

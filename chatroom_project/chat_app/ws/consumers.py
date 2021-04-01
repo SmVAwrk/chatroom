@@ -9,14 +9,14 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 
 from chat_app.models import Message, Room
 from chat_app.serializers import MessageSerializer
-
+from chatroom_project.settings import REDIS_HOST, REDIS_PORT
 
 logger = logging.getLogger(__name__)
 
 
 class AsyncChatConsumer(AsyncWebsocketConsumer):
     """Async Consumer для обработки WS-соединения."""
-    session_storage = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)
+    session_storage = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=0, decode_responses=True)
 
     # session_storage.delete('users_test-slug')
 

@@ -16,10 +16,11 @@ class RoomListSerializerTestCase(TestCase):
         room_1 = Room.objects.create(owner=user1, title='test-room')
         room_2 = Room.objects.create(owner=user1, title='test-room', slug='test-slug')
         room_2.members.add(user2)
+        room_1_uuid = room_1.slug.split('-')[-1]
         expected_data = [
             {
                 'title': 'test-room',
-                'slug': f'test-room-id{room_1.id}',
+                'slug': f'test-room-id-{room_1_uuid}',
                 'owner': user1.id,
                 'members_num': 1,
                 'members': []
@@ -70,10 +71,55 @@ class RoomDetailSerializerTestCase(TestCase):
         room_1 = Room.objects.create(owner=user1, title='test-room', slug='test-slug')
 
         input_data = {
-            'slug': 'test-slug-id1234'
+            'slug': 'test-slug-id-12abc34'
         }
 
         serializer = RoomDetailSerializer(instance=room_1, data=input_data, partial=True)
+        with self.assertRaises(ValidationError):
+            serializer.is_valid(raise_exception=True)
+
+    def test_update_title_with_autogen_slug(self):
+        user_model = get_user_model()
+        user1 = user_model.objects.create(email='user1@test.com')
+        room_1 = Room.objects.create(owner=user1, title='test-room')
+        room_1_uuid = room_1.slug.split('-')[-1]
+
+        input_data = {
+            'title': 'New test title',
+            'slug': f'test-room-id-{room_1_uuid}'
+        }
+
+        serializer = RoomDetailSerializer(instance=room_1, data=input_data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        self.assertEqual(serializer.data['title'], 'New test title')
+        self.assertEqual(serializer.data['slug'], f'test-room-id-{room_1_uuid}')
+
+    def test_create_with_existing_slug(self):
+        user_model = get_user_model()
+        user1 = user_model.objects.create(email='user1@test.com')
+        room_1 = Room.objects.create(owner=user1, title='test-room', slug='test-slug')
+
+        input_data = {
+            'title': 'New test title',
+            'slug': 'test-slug'
+        }
+
+        serializer = RoomDetailSerializer(data=input_data)
+        with self.assertRaises(ValidationError):
+            serializer.is_valid(raise_exception=True)
+
+    def test_create_with_members(self):
+        user_model = get_user_model()
+        user1 = user_model.objects.create(email='user1@test.com')
+        user2 = user_model.objects.create(email='user2@test.com')
+        input_data = {
+            'title': 'New test title',
+            'slug': 'test-slug',
+            'members': [user2.id, ]
+        }
+
+        serializer = RoomDetailSerializer(data=input_data)
         with self.assertRaises(ValidationError):
             serializer.is_valid(raise_exception=True)
 
@@ -81,7 +127,6 @@ class RoomDetailSerializerTestCase(TestCase):
         user_model = get_user_model()
         user1 = user_model.objects.create(email='user1@test.com')
         room_1 = Room.objects.create(owner=user1, title='test-room', slug='test-slug')
-
         input_data = {
             'slug': ''
         }
@@ -89,7 +134,8 @@ class RoomDetailSerializerTestCase(TestCase):
         serializer = RoomDetailSerializer(instance=room_1, data=input_data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        self.assertEqual(serializer.data['slug'], f'test-room-id{room_1.id}')
+        room_1_uuid = room_1.slug.split('-')[-1]
+        self.assertEqual(serializer.data['slug'], f'test-room-id-{room_1_uuid}')
 
     def test_add_members(self):
         user_model = get_user_model()
