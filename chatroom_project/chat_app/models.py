@@ -7,7 +7,6 @@ from slugify import slugify
 
 from chatroom_project import settings
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -33,7 +32,6 @@ class Room(models.Model):
         if not self.slug:
             self.slug = slugify(self.title) + '-id-' + str(uuid.uuid4()).split('-')[0]
         super().save(*args, **kwargs)
-
 
 
 class Message(models.Model):

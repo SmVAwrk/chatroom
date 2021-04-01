@@ -9,8 +9,8 @@ from rest_framework.validators import UniqueValidator
 
 from chat_app.models import Room, RoomInvite, Message
 
-
 logger = logging.getLogger(__name__)
+
 
 class RoomListSerializer(ModelSerializer):
     """Сериализатор для обработки списка чат-комнат"""
@@ -102,4 +102,4 @@ class MessageSerializer(ModelSerializer):
 
     class Meta:
         model = Message
-        exclude = ('id', )
+        exclude = ('id',)

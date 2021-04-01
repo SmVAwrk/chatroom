@@ -5,20 +5,12 @@ from channels.auth import AuthMiddlewareStack
 from channels.db import database_sync_to_async
 from channels.routing import URLRouter
 from channels.testing import WebsocketCommunicator
-from django.test import override_settings
 from django.urls import path
 
 from chat_app.models import Room, Message
 from chat_app.ws.consumers import AsyncChatConsumer
 
 
-# @override_settings(
-#     CHANNEL_LAYERS={
-#         "default": {
-#             "BACKEND": "channels.layers.InMemoryChannelLayer"
-#         }
-#     }
-# )
 @pytest.mark.django_db(transaction=True)
 @pytest.mark.asyncio
 async def test_connect_async_chat_consumer(django_user_model):

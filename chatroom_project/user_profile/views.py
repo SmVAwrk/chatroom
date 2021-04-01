@@ -11,6 +11,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
+from chatroom_project.settings import EMAIL_HOST_USER
 from user_profile.models import UserProfile, FriendshipRelation
 from user_profile.permissions import IsOwnerOrAdmin
 from user_profile.serializers import (
@@ -79,7 +80,8 @@ class ProfileUserViewSet(mixins.RetrieveModelMixin,
         serializer.save()
 
         # Отправка оповещения на почту
-        # send_friend_notification_task.delay(user_obj.email, request.user.profile.username)
+        if EMAIL_HOST_USER:
+            send_friend_notification_task.delay(user_obj.email, request.user.profile.username)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @action(

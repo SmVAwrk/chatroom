@@ -18,12 +18,6 @@ from user_profile.serializers import (
     FriendshipRelationSerializer, FriendshipRelationListSerializer
 )
 
-# Отладка SQL запросов
-# with CaptureQueriesContext(connection) as queries:
-#     response = self.client.get(url)
-#     pprint([q for q in queries])
-#     print('queries', len(queries))
-
 
 class ProfileUserViewSetTestCase(APITestCase):
 
@@ -352,3 +346,9 @@ class FriendshipRelationToMeViewSetTestCase(APITestCase):
         response = self.client.patch(url, data=input_data)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+# Отладка SQL запросов
+# with CaptureQueriesContext(connection) as queries:
+#     response = self.client.get(url)
+#     pprint([q for q in queries])
+#     print('queries', len(queries))

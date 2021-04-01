@@ -8,6 +8,7 @@ from chat_app.models import Message, RoomInvite
 
 logger = logging.getLogger(__name__)
 
+
 def invite_handler(invite):
     """Функция для обработки приглашения в чат-комнату при его изменении."""
     assert isinstance(invite, RoomInvite)

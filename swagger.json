@@ -1,0 +1,1999 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Chatroom",
+    "description": "API chat-\u043f\u0440\u0438\u043b\u043e\u0436\u0435\u043d\u0438\u044f",
+    "license": {
+      "name": "BSD License"
+    },
+    "version": "v1"
+  },
+  "host": "127.0.0.1:8080",
+  "schemes": [
+    "http"
+  ],
+  "basePath": "/api/v1",
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "securityDefinitions": {
+    "Basic": {
+      "type": "basic"
+    }
+  },
+  "security": [
+    {
+      "Basic": []
+    }
+  ],
+  "paths": {
+    "/auth/jwt/create/": {
+      "post": {
+        "operationId": "auth_jwt_create_create",
+        "description": "Takes a set of user credentials and returns an access and refresh JSON web\ntoken pair to prove the authentication of those credentials.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TokenObtainPair"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/TokenObtainPair"
+            }
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      },
+      "parameters": []
+    },
+    "/auth/jwt/refresh/": {
+      "post": {
+        "operationId": "auth_jwt_refresh_create",
+        "description": "Takes a refresh type JSON web token and returns an access type JSON web\ntoken if the refresh token is valid.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TokenRefresh"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/TokenRefresh"
+            }
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      },
+      "parameters": []
+    },
+    "/auth/jwt/verify/": {
+      "post": {
+        "operationId": "auth_jwt_verify_create",
+        "description": "Takes a token and indicates if it is valid.  This view provides no\ninformation about a token's fitness for a particular use.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TokenVerify"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/TokenVerify"
+            }
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      },
+      "parameters": []
+    },
+    "/auth/token/login/": {
+      "post": {
+        "operationId": "auth_token_login_create",
+        "description": "Use this endpoint to obtain user authentication token.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TokenCreate"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/TokenCreate"
+            }
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      },
+      "parameters": []
+    },
+    "/auth/token/logout/": {
+      "post": {
+        "operationId": "auth_token_logout_create",
+        "description": "Use this endpoint to logout user (remove user authentication token).",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      },
+      "parameters": []
+    },
+    "/auth/users/": {
+      "get": {
+        "operationId": "auth_users_list",
+        "description": "",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "A page number within the paginated result set.",
+            "required": false,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "required": [
+                "count",
+                "results"
+              ],
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer"
+                },
+                "next": {
+                  "type": "string",
+                  "format": "uri",
+                  "x-nullable": true
+                },
+                "previous": {
+                  "type": "string",
+                  "format": "uri",
+                  "x-nullable": true
+                },
+                "results": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/User"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      },
+      "post": {
+        "operationId": "auth_users_create",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserCreatePasswordRetype"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/UserCreatePasswordRetype"
+            }
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      },
+      "parameters": []
+    },
+    "/auth/users/activation/": {
+      "post": {
+        "operationId": "auth_users_activation",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Activation"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Activation"
+            }
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      },
+      "parameters": []
+    },
+    "/auth/users/me/": {
+      "get": {
+        "operationId": "auth_users_me_read",
+        "description": "",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "A page number within the paginated result set.",
+            "required": false,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "required": [
+                "count",
+                "results"
+              ],
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer"
+                },
+                "next": {
+                  "type": "string",
+                  "format": "uri",
+                  "x-nullable": true
+                },
+                "previous": {
+                  "type": "string",
+                  "format": "uri",
+                  "x-nullable": true
+                },
+                "results": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/User"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      },
+      "put": {
+        "operationId": "auth_users_me_update",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      },
+      "patch": {
+        "operationId": "auth_users_me_partial_update",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      },
+      "delete": {
+        "operationId": "auth_users_me_delete",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      },
+      "parameters": []
+    },
+    "/auth/users/resend_activation/": {
+      "post": {
+        "operationId": "auth_users_resend_activation",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SendEmailReset"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/SendEmailReset"
+            }
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      },
+      "parameters": []
+    },
+    "/auth/users/reset_email/": {
+      "post": {
+        "operationId": "auth_users_reset_username",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SendEmailReset"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/SendEmailReset"
+            }
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      },
+      "parameters": []
+    },
+    "/auth/users/reset_email_confirm/": {
+      "post": {
+        "operationId": "auth_users_reset_username_confirm",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UsernameResetConfirm"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/UsernameResetConfirm"
+            }
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      },
+      "parameters": []
+    },
+    "/auth/users/reset_password/": {
+      "post": {
+        "operationId": "auth_users_reset_password",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SendEmailReset"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/SendEmailReset"
+            }
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      },
+      "parameters": []
+    },
+    "/auth/users/reset_password_confirm/": {
+      "post": {
+        "operationId": "auth_users_reset_password_confirm",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/PasswordResetConfirm"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/PasswordResetConfirm"
+            }
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      },
+      "parameters": []
+    },
+    "/auth/users/set_email/": {
+      "post": {
+        "operationId": "auth_users_set_username",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SetUsername"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/SetUsername"
+            }
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      },
+      "parameters": []
+    },
+    "/auth/users/set_password/": {
+      "post": {
+        "operationId": "auth_users_set_password",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SetPassword"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/SetPassword"
+            }
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      },
+      "parameters": []
+    },
+    "/auth/users/{id}/": {
+      "get": {
+        "operationId": "auth_users_read",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      },
+      "put": {
+        "operationId": "auth_users_update",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      },
+      "patch": {
+        "operationId": "auth_users_partial_update",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      },
+      "delete": {
+        "operationId": "auth_users_delete",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "A unique integer value identifying this custom user.",
+          "required": true,
+          "type": "integer"
+        }
+      ]
+    },
+    "/chat/invite-from-me/": {
+      "get": {
+        "operationId": "chat_invite-from-me_list",
+        "description": "\u041d\u0430\u0431\u043e\u0440 \u043f\u0440\u0435\u0434\u0441\u0442\u0430\u0432\u043b\u0435\u043d\u0438\u0439 \u0434\u043b\u044f \u043f\u0440\u043e\u0441\u043c\u043e\u0442\u0440\u0430 \u0438\u0441\u0445\u043e\u0434\u044f\u0449\u0438\u0445 \u043f\u0440\u0438\u0433\u043b\u0430\u0448\u0435\u043d\u0438\u0439.",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "A page number within the paginated result set.",
+            "required": false,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "required": [
+                "count",
+                "results"
+              ],
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer"
+                },
+                "next": {
+                  "type": "string",
+                  "format": "uri",
+                  "x-nullable": true
+                },
+                "previous": {
+                  "type": "string",
+                  "format": "uri",
+                  "x-nullable": true
+                },
+                "results": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Invite"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "chat"
+        ]
+      },
+      "parameters": []
+    },
+    "/chat/invite-from-me/{id}/": {
+      "delete": {
+        "operationId": "chat_invite-from-me_delete",
+        "description": "\u041d\u0430\u0431\u043e\u0440 \u043f\u0440\u0435\u0434\u0441\u0442\u0430\u0432\u043b\u0435\u043d\u0438\u0439 \u0434\u043b\u044f \u043f\u0440\u043e\u0441\u043c\u043e\u0442\u0440\u0430 \u0438\u0441\u0445\u043e\u0434\u044f\u0449\u0438\u0445 \u043f\u0440\u0438\u0433\u043b\u0430\u0448\u0435\u043d\u0438\u0439.",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "chat"
+        ]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/chat/invite-to-me/": {
+      "get": {
+        "operationId": "chat_invite-to-me_list",
+        "description": "\u041d\u0430\u0431\u043e\u0440 \u043f\u0440\u0435\u0434\u0441\u0442\u0430\u0432\u043b\u0435\u043d\u0438\u0439 \u0434\u043b\u044f \u043f\u0440\u043e\u0441\u043c\u043e\u0442\u0440\u0430 \u0432\u0445\u043e\u0434\u044f\u0449\u0438\u0445 \u043f\u0440\u0438\u0433\u043b\u0430\u0448\u0435\u043d\u0438\u0439.",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "A page number within the paginated result set.",
+            "required": false,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "required": [
+                "count",
+                "results"
+              ],
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer"
+                },
+                "next": {
+                  "type": "string",
+                  "format": "uri",
+                  "x-nullable": true
+                },
+                "previous": {
+                  "type": "string",
+                  "format": "uri",
+                  "x-nullable": true
+                },
+                "results": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/InviteToMe"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "chat"
+        ]
+      },
+      "parameters": []
+    },
+    "/chat/invite-to-me/{id}/": {
+      "put": {
+        "operationId": "chat_invite-to-me_update",
+        "description": "\u041d\u0430\u0431\u043e\u0440 \u043f\u0440\u0435\u0434\u0441\u0442\u0430\u0432\u043b\u0435\u043d\u0438\u0439 \u0434\u043b\u044f \u043f\u0440\u043e\u0441\u043c\u043e\u0442\u0440\u0430 \u0432\u0445\u043e\u0434\u044f\u0449\u0438\u0445 \u043f\u0440\u0438\u0433\u043b\u0430\u0448\u0435\u043d\u0438\u0439.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/InviteToMe"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/InviteToMe"
+            }
+          }
+        },
+        "tags": [
+          "chat"
+        ]
+      },
+      "patch": {
+        "operationId": "chat_invite-to-me_partial_update",
+        "description": "\u041d\u0430\u0431\u043e\u0440 \u043f\u0440\u0435\u0434\u0441\u0442\u0430\u0432\u043b\u0435\u043d\u0438\u0439 \u0434\u043b\u044f \u043f\u0440\u043e\u0441\u043c\u043e\u0442\u0440\u0430 \u0432\u0445\u043e\u0434\u044f\u0449\u0438\u0445 \u043f\u0440\u0438\u0433\u043b\u0430\u0448\u0435\u043d\u0438\u0439.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/InviteToMe"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/InviteToMe"
+            }
+          }
+        },
+        "tags": [
+          "chat"
+        ]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/chat/room/": {
+      "get": {
+        "operationId": "chat_room_list",
+        "description": "\u041d\u0430\u0431\u043e\u0440 \u043f\u0440\u0435\u0434\u0441\u0442\u0430\u0432\u043b\u0435\u043d\u0438\u0439 \u0434\u043b\u044f \u043f\u0440\u043e\u0441\u043c\u043e\u0442\u0440\u0430 \u0441\u043f\u0438\u0441\u043a\u0430 \u0441\u0432\u043e\u0438\u0445 \u0447\u0430\u0442-\u043a\u043e\u043c\u043d\u0430\u0442,\n\u043f\u0440\u043e\u0441\u043c\u043e\u0442\u0440\u0430 \u044d\u043a\u0437\u0435\u043c\u043f\u043b\u044f\u0440\u0430 \u0447\u0430\u0442-\u043a\u043e\u043c\u043d\u0430\u0442\u044b, \u0441\u043e\u0437\u0434\u0430\u043d\u0438\u044f, \u0438\u0437\u043c\u0435\u043d\u0435\u043d\u0438\u044f \u0438\u043b\u0438 \u0443\u0434\u0430\u043b\u0435\u043d\u0438\u044f.\n\u0412\u043e\u0437\u043c\u043e\u0436\u0435\u043d \u043f\u043e\u0438\u0441\u043a \u043f\u0440\u043e\u0444\u0438\u043b\u044f \u043f\u043e \u043f\u043e\u043b\u044f\u043c 'title' \u0438 'slug'.",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "description": "A search term.",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "A page number within the paginated result set.",
+            "required": false,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "required": [
+                "count",
+                "results"
+              ],
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer"
+                },
+                "next": {
+                  "type": "string",
+                  "format": "uri",
+                  "x-nullable": true
+                },
+                "previous": {
+                  "type": "string",
+                  "format": "uri",
+                  "x-nullable": true
+                },
+                "results": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/RoomList"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "chat"
+        ]
+      },
+      "post": {
+        "operationId": "chat_room_create",
+        "description": "\u041d\u0430\u0431\u043e\u0440 \u043f\u0440\u0435\u0434\u0441\u0442\u0430\u0432\u043b\u0435\u043d\u0438\u0439 \u0434\u043b\u044f \u043f\u0440\u043e\u0441\u043c\u043e\u0442\u0440\u0430 \u0441\u043f\u0438\u0441\u043a\u0430 \u0441\u0432\u043e\u0438\u0445 \u0447\u0430\u0442-\u043a\u043e\u043c\u043d\u0430\u0442,\n\u043f\u0440\u043e\u0441\u043c\u043e\u0442\u0440\u0430 \u044d\u043a\u0437\u0435\u043c\u043f\u043b\u044f\u0440\u0430 \u0447\u0430\u0442-\u043a\u043e\u043c\u043d\u0430\u0442\u044b, \u0441\u043e\u0437\u0434\u0430\u043d\u0438\u044f, \u0438\u0437\u043c\u0435\u043d\u0435\u043d\u0438\u044f \u0438\u043b\u0438 \u0443\u0434\u0430\u043b\u0435\u043d\u0438\u044f.\n\u0412\u043e\u0437\u043c\u043e\u0436\u0435\u043d \u043f\u043e\u0438\u0441\u043a \u043f\u0440\u043e\u0444\u0438\u043b\u044f \u043f\u043e \u043f\u043e\u043b\u044f\u043c 'title' \u0438 'slug'.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RoomDetail"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/RoomDetail"
+            }
+          }
+        },
+        "tags": [
+          "chat"
+        ]
+      },
+      "parameters": []
+    },
+    "/chat/room/{room_slug}/invite/": {
+      "post": {
+        "operationId": "chat_room_invite_create",
+        "description": "\u0424\u0443\u043d\u043a\u0446\u0438\u044f \u043e\u0431\u0440\u0430\u0431\u043e\u0442\u043a\u0438 POST-\u0437\u0430\u043f\u0440\u043e\u0441\u0430.",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "chat"
+        ]
+      },
+      "parameters": [
+        {
+          "name": "room_slug",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/chat/room/{room_slug}/messages/": {
+      "get": {
+        "operationId": "chat_room_messages_list",
+        "description": "\u0424\u0443\u043d\u043a\u0446\u0438\u044f \u043e\u0431\u0440\u0430\u0431\u043e\u0442\u043a\u0438 GET-\u0437\u0430\u043f\u0440\u043e\u0441\u0430 LazyLoad.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "chat"
+        ]
+      },
+      "parameters": [
+        {
+          "name": "room_slug",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/chat/room/{slug}/": {
+      "get": {
+        "operationId": "chat_room_read",
+        "description": "\u041d\u0430\u0431\u043e\u0440 \u043f\u0440\u0435\u0434\u0441\u0442\u0430\u0432\u043b\u0435\u043d\u0438\u0439 \u0434\u043b\u044f \u043f\u0440\u043e\u0441\u043c\u043e\u0442\u0440\u0430 \u0441\u043f\u0438\u0441\u043a\u0430 \u0441\u0432\u043e\u0438\u0445 \u0447\u0430\u0442-\u043a\u043e\u043c\u043d\u0430\u0442,\n\u043f\u0440\u043e\u0441\u043c\u043e\u0442\u0440\u0430 \u044d\u043a\u0437\u0435\u043c\u043f\u043b\u044f\u0440\u0430 \u0447\u0430\u0442-\u043a\u043e\u043c\u043d\u0430\u0442\u044b, \u0441\u043e\u0437\u0434\u0430\u043d\u0438\u044f, \u0438\u0437\u043c\u0435\u043d\u0435\u043d\u0438\u044f \u0438\u043b\u0438 \u0443\u0434\u0430\u043b\u0435\u043d\u0438\u044f.\n\u0412\u043e\u0437\u043c\u043e\u0436\u0435\u043d \u043f\u043e\u0438\u0441\u043a \u043f\u0440\u043e\u0444\u0438\u043b\u044f \u043f\u043e \u043f\u043e\u043b\u044f\u043c 'title' \u0438 'slug'.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/RoomDetail"
+            }
+          }
+        },
+        "tags": [
+          "chat"
+        ]
+      },
+      "put": {
+        "operationId": "chat_room_update",
+        "description": "\u041d\u0430\u0431\u043e\u0440 \u043f\u0440\u0435\u0434\u0441\u0442\u0430\u0432\u043b\u0435\u043d\u0438\u0439 \u0434\u043b\u044f \u043f\u0440\u043e\u0441\u043c\u043e\u0442\u0440\u0430 \u0441\u043f\u0438\u0441\u043a\u0430 \u0441\u0432\u043e\u0438\u0445 \u0447\u0430\u0442-\u043a\u043e\u043c\u043d\u0430\u0442,\n\u043f\u0440\u043e\u0441\u043c\u043e\u0442\u0440\u0430 \u044d\u043a\u0437\u0435\u043c\u043f\u043b\u044f\u0440\u0430 \u0447\u0430\u0442-\u043a\u043e\u043c\u043d\u0430\u0442\u044b, \u0441\u043e\u0437\u0434\u0430\u043d\u0438\u044f, \u0438\u0437\u043c\u0435\u043d\u0435\u043d\u0438\u044f \u0438\u043b\u0438 \u0443\u0434\u0430\u043b\u0435\u043d\u0438\u044f.\n\u0412\u043e\u0437\u043c\u043e\u0436\u0435\u043d \u043f\u043e\u0438\u0441\u043a \u043f\u0440\u043e\u0444\u0438\u043b\u044f \u043f\u043e \u043f\u043e\u043b\u044f\u043c 'title' \u0438 'slug'.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RoomDetail"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/RoomDetail"
+            }
+          }
+        },
+        "tags": [
+          "chat"
+        ]
+      },
+      "patch": {
+        "operationId": "chat_room_partial_update",
+        "description": "\u041d\u0430\u0431\u043e\u0440 \u043f\u0440\u0435\u0434\u0441\u0442\u0430\u0432\u043b\u0435\u043d\u0438\u0439 \u0434\u043b\u044f \u043f\u0440\u043e\u0441\u043c\u043e\u0442\u0440\u0430 \u0441\u043f\u0438\u0441\u043a\u0430 \u0441\u0432\u043e\u0438\u0445 \u0447\u0430\u0442-\u043a\u043e\u043c\u043d\u0430\u0442,\n\u043f\u0440\u043e\u0441\u043c\u043e\u0442\u0440\u0430 \u044d\u043a\u0437\u0435\u043c\u043f\u043b\u044f\u0440\u0430 \u0447\u0430\u0442-\u043a\u043e\u043c\u043d\u0430\u0442\u044b, \u0441\u043e\u0437\u0434\u0430\u043d\u0438\u044f, \u0438\u0437\u043c\u0435\u043d\u0435\u043d\u0438\u044f \u0438\u043b\u0438 \u0443\u0434\u0430\u043b\u0435\u043d\u0438\u044f.\n\u0412\u043e\u0437\u043c\u043e\u0436\u0435\u043d \u043f\u043e\u0438\u0441\u043a \u043f\u0440\u043e\u0444\u0438\u043b\u044f \u043f\u043e \u043f\u043e\u043b\u044f\u043c 'title' \u0438 'slug'.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RoomDetail"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/RoomDetail"
+            }
+          }
+        },
+        "tags": [
+          "chat"
+        ]
+      },
+      "delete": {
+        "operationId": "chat_room_delete",
+        "description": "\u041d\u0430\u0431\u043e\u0440 \u043f\u0440\u0435\u0434\u0441\u0442\u0430\u0432\u043b\u0435\u043d\u0438\u0439 \u0434\u043b\u044f \u043f\u0440\u043e\u0441\u043c\u043e\u0442\u0440\u0430 \u0441\u043f\u0438\u0441\u043a\u0430 \u0441\u0432\u043e\u0438\u0445 \u0447\u0430\u0442-\u043a\u043e\u043c\u043d\u0430\u0442,\n\u043f\u0440\u043e\u0441\u043c\u043e\u0442\u0440\u0430 \u044d\u043a\u0437\u0435\u043c\u043f\u043b\u044f\u0440\u0430 \u0447\u0430\u0442-\u043a\u043e\u043c\u043d\u0430\u0442\u044b, \u0441\u043e\u0437\u0434\u0430\u043d\u0438\u044f, \u0438\u0437\u043c\u0435\u043d\u0435\u043d\u0438\u044f \u0438\u043b\u0438 \u0443\u0434\u0430\u043b\u0435\u043d\u0438\u044f.\n\u0412\u043e\u0437\u043c\u043e\u0436\u0435\u043d \u043f\u043e\u0438\u0441\u043a \u043f\u0440\u043e\u0444\u0438\u043b\u044f \u043f\u043e \u043f\u043e\u043b\u044f\u043c 'title' \u0438 'slug'.",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "chat"
+        ]
+      },
+      "parameters": [
+        {
+          "name": "slug",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/friend-requests-from-me/": {
+      "get": {
+        "operationId": "friend-requests-from-me_list",
+        "description": "\u041d\u0430\u0431\u043e\u0440 \u043f\u0440\u0435\u0434\u0441\u0442\u0430\u0432\u043b\u0435\u043d\u0438\u0439 \u0434\u043b\u044f \u043f\u043e\u043b\u0443\u0447\u0435\u043d\u0438\u044f \u0438\u0441\u0445\u043e\u0434\u044f\u0449\u0438\u0445 \u0437\u0430\u043f\u0440\u043e\u0441\u043e\u0432 \u043d\u0430 \u0434\u0440\u0443\u0436\u0431\u0443\n\u0438 \u0443\u0434\u0430\u043b\u0435\u043d\u0438\u044f \u044d\u043a\u0437\u0435\u043c\u043f\u043b\u044f\u0440\u0430 \u0437\u0430\u043f\u0440\u043e\u0441\u0430.",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "A page number within the paginated result set.",
+            "required": false,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "required": [
+                "count",
+                "results"
+              ],
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer"
+                },
+                "next": {
+                  "type": "string",
+                  "format": "uri",
+                  "x-nullable": true
+                },
+                "previous": {
+                  "type": "string",
+                  "format": "uri",
+                  "x-nullable": true
+                },
+                "results": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/FriendshipRelationList"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "friend-requests-from-me"
+        ]
+      },
+      "parameters": []
+    },
+    "/friend-requests-from-me/{id}/": {
+      "delete": {
+        "operationId": "friend-requests-from-me_delete",
+        "description": "\u041d\u0430\u0431\u043e\u0440 \u043f\u0440\u0435\u0434\u0441\u0442\u0430\u0432\u043b\u0435\u043d\u0438\u0439 \u0434\u043b\u044f \u043f\u043e\u043b\u0443\u0447\u0435\u043d\u0438\u044f \u0438\u0441\u0445\u043e\u0434\u044f\u0449\u0438\u0445 \u0437\u0430\u043f\u0440\u043e\u0441\u043e\u0432 \u043d\u0430 \u0434\u0440\u0443\u0436\u0431\u0443\n\u0438 \u0443\u0434\u0430\u043b\u0435\u043d\u0438\u044f \u044d\u043a\u0437\u0435\u043c\u043f\u043b\u044f\u0440\u0430 \u0437\u0430\u043f\u0440\u043e\u0441\u0430.",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "friend-requests-from-me"
+        ]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/friend-requests-to-me/": {
+      "get": {
+        "operationId": "friend-requests-to-me_list",
+        "description": "\u041d\u0430\u0431\u043e\u0440 \u043f\u0440\u0435\u0434\u0441\u0442\u0430\u0432\u043b\u0435\u043d\u0438\u0439 \u0434\u043b\u044f \u043f\u043e\u043b\u0443\u0447\u0435\u043d\u0438\u044f \u0432\u0445\u043e\u0434\u044f\u0449\u0438\u0445 \u0437\u0430\u043f\u0440\u043e\u0441\u043e\u0432 \u043d\u0430 \u0434\u0440\u0443\u0436\u0431\u0443\n\u0438 \u0438\u0437\u043c\u0435\u043d\u0435\u043d\u0438\u044f \u044d\u043a\u0437\u0435\u043c\u043f\u043b\u044f\u0440\u0430 \u0437\u0430\u043f\u0440\u043e\u0441\u0430.",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "A page number within the paginated result set.",
+            "required": false,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "required": [
+                "count",
+                "results"
+              ],
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer"
+                },
+                "next": {
+                  "type": "string",
+                  "format": "uri",
+                  "x-nullable": true
+                },
+                "previous": {
+                  "type": "string",
+                  "format": "uri",
+                  "x-nullable": true
+                },
+                "results": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/FriendshipRelationList"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "friend-requests-to-me"
+        ]
+      },
+      "parameters": []
+    },
+    "/friend-requests-to-me/{id}/": {
+      "put": {
+        "operationId": "friend-requests-to-me_update",
+        "description": "\u041d\u0430\u0431\u043e\u0440 \u043f\u0440\u0435\u0434\u0441\u0442\u0430\u0432\u043b\u0435\u043d\u0438\u0439 \u0434\u043b\u044f \u043f\u043e\u043b\u0443\u0447\u0435\u043d\u0438\u044f \u0432\u0445\u043e\u0434\u044f\u0449\u0438\u0445 \u0437\u0430\u043f\u0440\u043e\u0441\u043e\u0432 \u043d\u0430 \u0434\u0440\u0443\u0436\u0431\u0443\n\u0438 \u0438\u0437\u043c\u0435\u043d\u0435\u043d\u0438\u044f \u044d\u043a\u0437\u0435\u043c\u043f\u043b\u044f\u0440\u0430 \u0437\u0430\u043f\u0440\u043e\u0441\u0430.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/FriendshipRelationList"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/FriendshipRelationList"
+            }
+          }
+        },
+        "tags": [
+          "friend-requests-to-me"
+        ]
+      },
+      "patch": {
+        "operationId": "friend-requests-to-me_partial_update",
+        "description": "\u041d\u0430\u0431\u043e\u0440 \u043f\u0440\u0435\u0434\u0441\u0442\u0430\u0432\u043b\u0435\u043d\u0438\u0439 \u0434\u043b\u044f \u043f\u043e\u043b\u0443\u0447\u0435\u043d\u0438\u044f \u0432\u0445\u043e\u0434\u044f\u0449\u0438\u0445 \u0437\u0430\u043f\u0440\u043e\u0441\u043e\u0432 \u043d\u0430 \u0434\u0440\u0443\u0436\u0431\u0443\n\u0438 \u0438\u0437\u043c\u0435\u043d\u0435\u043d\u0438\u044f \u044d\u043a\u0437\u0435\u043c\u043f\u043b\u044f\u0440\u0430 \u0437\u0430\u043f\u0440\u043e\u0441\u0430.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/FriendshipRelationList"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/FriendshipRelationList"
+            }
+          }
+        },
+        "tags": [
+          "friend-requests-to-me"
+        ]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/oauth/convert-token/": {
+      "post": {
+        "operationId": "oauth_convert-token_create",
+        "summary": "Implements an endpoint to convert a provider token to an access token",
+        "description": "The endpoint is used in the following flows:\n\n* Authorization code\n* Client credentials",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "oauth"
+        ]
+      },
+      "parameters": []
+    },
+    "/oauth/invalidate-sessions/": {
+      "post": {
+        "operationId": "oauth_invalidate-sessions_create",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "oauth"
+        ]
+      },
+      "parameters": []
+    },
+    "/oauth/revoke-token/": {
+      "post": {
+        "operationId": "oauth_revoke-token_create",
+        "description": "Implements an endpoint to revoke access or refresh tokens",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "oauth"
+        ]
+      },
+      "parameters": []
+    },
+    "/oauth/token/": {
+      "post": {
+        "operationId": "oauth_token_create",
+        "summary": "Implements an endpoint to provide access tokens",
+        "description": "The endpoint is used in the following flows:\n\n* Authorization code\n* Password\n* Client credentials",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "oauth"
+        ]
+      },
+      "parameters": []
+    },
+    "/profile/": {
+      "get": {
+        "operationId": "profile_list",
+        "description": "\u041d\u0430\u0431\u043e\u0440 \u043f\u0440\u0435\u0434\u0441\u0442\u0430\u0432\u043b\u0435\u043d\u0438\u0439 \u0434\u043b\u044f \u043f\u043e\u043b\u0443\u0447\u0435\u043d\u0438\u044f \u0441\u043f\u0438\u0441\u043a\u0430 \u043f\u0440\u043e\u0444\u0438\u043b\u0435\u0439,\n\u043f\u043e\u043b\u0443\u0447\u0435\u043d\u0438\u044f \u044d\u043a\u0437\u0435\u043c\u043f\u043b\u044f\u0440\u0430 \u043f\u0440\u043e\u0444\u0438\u043b\u044f \u0438 \u0435\u0433\u043e \u0438\u0437\u043c\u0435\u043d\u0435\u043d\u0438\u044f.\n\u0412\u043e\u0437\u043c\u043e\u0436\u0435\u043d \u043f\u043e\u0438\u0441\u043a \u043f\u0440\u043e\u0444\u0438\u043b\u044f \u043f\u043e \u043f\u043e\u043b\u044e 'username'.\n\u0414\u043e\u0431\u0430\u0432\u043b\u0435\u043d\u043e \u0434\u0432\u0430 \u0434\u043e\u043f\u043e\u043b\u043d\u0438\u0442\u0435\u043b\u044c\u043d\u044b\u0445 \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u044f:\n'add_friend' - \u0434\u043b\u044f \u0434\u043e\u0431\u0430\u0432\u043b\u0435\u043d\u0438\u044f \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u044f \u0432 \u0434\u0440\u0443\u0437\u044c\u044f,\n'delete_friend' - \u0434\u043b\u044f \u0443\u0434\u0430\u043b\u0435\u043d\u0438\u044f \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u044f \u0438\u0437 \u0434\u0440\u0443\u0437\u0435\u0439.",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "description": "A search term.",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "A page number within the paginated result set.",
+            "required": false,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "required": [
+                "count",
+                "results"
+              ],
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer"
+                },
+                "next": {
+                  "type": "string",
+                  "format": "uri",
+                  "x-nullable": true
+                },
+                "previous": {
+                  "type": "string",
+                  "format": "uri",
+                  "x-nullable": true
+                },
+                "results": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/ProfileList"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "profile"
+        ]
+      },
+      "parameters": []
+    },
+    "/profile/{user}/": {
+      "get": {
+        "operationId": "profile_read",
+        "description": "\u041d\u0430\u0431\u043e\u0440 \u043f\u0440\u0435\u0434\u0441\u0442\u0430\u0432\u043b\u0435\u043d\u0438\u0439 \u0434\u043b\u044f \u043f\u043e\u043b\u0443\u0447\u0435\u043d\u0438\u044f \u0441\u043f\u0438\u0441\u043a\u0430 \u043f\u0440\u043e\u0444\u0438\u043b\u0435\u0439,\n\u043f\u043e\u043b\u0443\u0447\u0435\u043d\u0438\u044f \u044d\u043a\u0437\u0435\u043c\u043f\u043b\u044f\u0440\u0430 \u043f\u0440\u043e\u0444\u0438\u043b\u044f \u0438 \u0435\u0433\u043e \u0438\u0437\u043c\u0435\u043d\u0435\u043d\u0438\u044f.\n\u0412\u043e\u0437\u043c\u043e\u0436\u0435\u043d \u043f\u043e\u0438\u0441\u043a \u043f\u0440\u043e\u0444\u0438\u043b\u044f \u043f\u043e \u043f\u043e\u043b\u044e 'username'.\n\u0414\u043e\u0431\u0430\u0432\u043b\u0435\u043d\u043e \u0434\u0432\u0430 \u0434\u043e\u043f\u043e\u043b\u043d\u0438\u0442\u0435\u043b\u044c\u043d\u044b\u0445 \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u044f:\n'add_friend' - \u0434\u043b\u044f \u0434\u043e\u0431\u0430\u0432\u043b\u0435\u043d\u0438\u044f \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u044f \u0432 \u0434\u0440\u0443\u0437\u044c\u044f,\n'delete_friend' - \u0434\u043b\u044f \u0443\u0434\u0430\u043b\u0435\u043d\u0438\u044f \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u044f \u0438\u0437 \u0434\u0440\u0443\u0437\u0435\u0439.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ProfileDetail"
+            }
+          }
+        },
+        "tags": [
+          "profile"
+        ]
+      },
+      "put": {
+        "operationId": "profile_update",
+        "description": "\u041d\u0430\u0431\u043e\u0440 \u043f\u0440\u0435\u0434\u0441\u0442\u0430\u0432\u043b\u0435\u043d\u0438\u0439 \u0434\u043b\u044f \u043f\u043e\u043b\u0443\u0447\u0435\u043d\u0438\u044f \u0441\u043f\u0438\u0441\u043a\u0430 \u043f\u0440\u043e\u0444\u0438\u043b\u0435\u0439,\n\u043f\u043e\u043b\u0443\u0447\u0435\u043d\u0438\u044f \u044d\u043a\u0437\u0435\u043c\u043f\u043b\u044f\u0440\u0430 \u043f\u0440\u043e\u0444\u0438\u043b\u044f \u0438 \u0435\u0433\u043e \u0438\u0437\u043c\u0435\u043d\u0435\u043d\u0438\u044f.\n\u0412\u043e\u0437\u043c\u043e\u0436\u0435\u043d \u043f\u043e\u0438\u0441\u043a \u043f\u0440\u043e\u0444\u0438\u043b\u044f \u043f\u043e \u043f\u043e\u043b\u044e 'username'.\n\u0414\u043e\u0431\u0430\u0432\u043b\u0435\u043d\u043e \u0434\u0432\u0430 \u0434\u043e\u043f\u043e\u043b\u043d\u0438\u0442\u0435\u043b\u044c\u043d\u044b\u0445 \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u044f:\n'add_friend' - \u0434\u043b\u044f \u0434\u043e\u0431\u0430\u0432\u043b\u0435\u043d\u0438\u044f \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u044f \u0432 \u0434\u0440\u0443\u0437\u044c\u044f,\n'delete_friend' - \u0434\u043b\u044f \u0443\u0434\u0430\u043b\u0435\u043d\u0438\u044f \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u044f \u0438\u0437 \u0434\u0440\u0443\u0437\u0435\u0439.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ProfileDetail"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ProfileDetail"
+            }
+          }
+        },
+        "tags": [
+          "profile"
+        ]
+      },
+      "patch": {
+        "operationId": "profile_partial_update",
+        "description": "\u041d\u0430\u0431\u043e\u0440 \u043f\u0440\u0435\u0434\u0441\u0442\u0430\u0432\u043b\u0435\u043d\u0438\u0439 \u0434\u043b\u044f \u043f\u043e\u043b\u0443\u0447\u0435\u043d\u0438\u044f \u0441\u043f\u0438\u0441\u043a\u0430 \u043f\u0440\u043e\u0444\u0438\u043b\u0435\u0439,\n\u043f\u043e\u043b\u0443\u0447\u0435\u043d\u0438\u044f \u044d\u043a\u0437\u0435\u043c\u043f\u043b\u044f\u0440\u0430 \u043f\u0440\u043e\u0444\u0438\u043b\u044f \u0438 \u0435\u0433\u043e \u0438\u0437\u043c\u0435\u043d\u0435\u043d\u0438\u044f.\n\u0412\u043e\u0437\u043c\u043e\u0436\u0435\u043d \u043f\u043e\u0438\u0441\u043a \u043f\u0440\u043e\u0444\u0438\u043b\u044f \u043f\u043e \u043f\u043e\u043b\u044e 'username'.\n\u0414\u043e\u0431\u0430\u0432\u043b\u0435\u043d\u043e \u0434\u0432\u0430 \u0434\u043e\u043f\u043e\u043b\u043d\u0438\u0442\u0435\u043b\u044c\u043d\u044b\u0445 \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u044f:\n'add_friend' - \u0434\u043b\u044f \u0434\u043e\u0431\u0430\u0432\u043b\u0435\u043d\u0438\u044f \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u044f \u0432 \u0434\u0440\u0443\u0437\u044c\u044f,\n'delete_friend' - \u0434\u043b\u044f \u0443\u0434\u0430\u043b\u0435\u043d\u0438\u044f \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u044f \u0438\u0437 \u0434\u0440\u0443\u0437\u0435\u0439.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ProfileDetail"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ProfileDetail"
+            }
+          }
+        },
+        "tags": [
+          "profile"
+        ]
+      },
+      "parameters": [
+        {
+          "name": "user",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/profile/{user}/friend-add/": {
+      "post": {
+        "operationId": "profile_add_friend",
+        "description": "\u041a\u0430\u0441\u0442\u043e\u043c\u043d\u043e\u0435 \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u0435 \u0434\u043b\u044f \u0434\u043e\u0431\u0430\u0432\u043b\u0435\u043d\u0438\u044f \u0432 \u0434\u0440\u0443\u0437\u044c\u044f.\n\u041f\u0440\u0438 \u0432\u0430\u043b\u0438\u0434\u043d\u044b\u0445 \u0434\u0430\u043d\u043d\u044b\u0445 \u0441\u043e\u0437\u0434\u0430\u0435\u0442 \u0437\u0430\u044f\u0432\u043a\u0443 \u043d\u0430 \u0434\u043e\u0431\u0430\u0432\u043b\u0435\u043d\u0438\u0435 \u0434\u0440\u0443\u0433\u0430.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ProfileDetail"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ProfileDetail"
+            }
+          }
+        },
+        "tags": [
+          "profile"
+        ]
+      },
+      "parameters": [
+        {
+          "name": "user",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/profile/{user}/friend-del/": {
+      "delete": {
+        "operationId": "profile_delete_friend",
+        "description": "\u041a\u0430\u0441\u0442\u043e\u043c\u043d\u043e\u0435 \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u0435 \u0434\u043b\u044f \u0443\u0434\u0430\u043b\u0435\u043d\u0438\u044f \u0434\u0440\u0443\u0433\u0430.\n\u041f\u0440\u0438 \u0432\u0430\u043b\u0438\u0434\u043d\u044b\u0445 \u0434\u0430\u043d\u043d\u044b\u0445 \u0443\u0434\u0430\u043b\u044f\u0435\u0442 \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u044f \u0438\u0437 \u0434\u0440\u0443\u0437\u0435\u0439.",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "profile"
+        ]
+      },
+      "parameters": [
+        {
+          "name": "user",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    }
+  },
+  "definitions": {
+    "TokenObtainPair": {
+      "required": [
+        "email",
+        "password"
+      ],
+      "type": "object",
+      "properties": {
+        "email": {
+          "title": "Email",
+          "type": "string",
+          "minLength": 1
+        },
+        "password": {
+          "title": "Password",
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "TokenRefresh": {
+      "required": [
+        "refresh"
+      ],
+      "type": "object",
+      "properties": {
+        "refresh": {
+          "title": "Refresh",
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "TokenVerify": {
+      "required": [
+        "token"
+      ],
+      "type": "object",
+      "properties": {
+        "token": {
+          "title": "Token",
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "TokenCreate": {
+      "type": "object",
+      "properties": {
+        "password": {
+          "title": "Password",
+          "type": "string",
+          "minLength": 1
+        },
+        "email": {
+          "title": "Email",
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "User": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "ID",
+          "type": "integer",
+          "readOnly": true
+        },
+        "email": {
+          "title": "E-mail address",
+          "type": "string",
+          "format": "email",
+          "readOnly": true,
+          "minLength": 1
+        }
+      }
+    },
+    "UserCreatePasswordRetype": {
+      "required": [
+        "email",
+        "password",
+        "re_password"
+      ],
+      "type": "object",
+      "properties": {
+        "email": {
+          "title": "E-mail address",
+          "type": "string",
+          "format": "email",
+          "maxLength": 254,
+          "minLength": 1
+        },
+        "id": {
+          "title": "ID",
+          "type": "integer",
+          "readOnly": true
+        },
+        "password": {
+          "title": "Password",
+          "type": "string",
+          "minLength": 1
+        },
+        "re_password": {
+          "title": "Re password",
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "Activation": {
+      "required": [
+        "uid",
+        "token"
+      ],
+      "type": "object",
+      "properties": {
+        "uid": {
+          "title": "Uid",
+          "type": "string",
+          "minLength": 1
+        },
+        "token": {
+          "title": "Token",
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "SendEmailReset": {
+      "required": [
+        "email"
+      ],
+      "type": "object",
+      "properties": {
+        "email": {
+          "title": "Email",
+          "type": "string",
+          "format": "email",
+          "minLength": 1
+        }
+      }
+    },
+    "UsernameResetConfirm": {
+      "required": [
+        "new_email"
+      ],
+      "type": "object",
+      "properties": {
+        "new_email": {
+          "title": "E-mail address",
+          "type": "string",
+          "format": "email",
+          "maxLength": 254,
+          "minLength": 1
+        }
+      }
+    },
+    "PasswordResetConfirm": {
+      "required": [
+        "uid",
+        "token",
+        "new_password"
+      ],
+      "type": "object",
+      "properties": {
+        "uid": {
+          "title": "Uid",
+          "type": "string",
+          "minLength": 1
+        },
+        "token": {
+          "title": "Token",
+          "type": "string",
+          "minLength": 1
+        },
+        "new_password": {
+          "title": "New password",
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "SetUsername": {
+      "required": [
+        "current_password",
+        "new_email"
+      ],
+      "type": "object",
+      "properties": {
+        "current_password": {
+          "title": "Current password",
+          "type": "string",
+          "minLength": 1
+        },
+        "new_email": {
+          "title": "E-mail address",
+          "type": "string",
+          "format": "email",
+          "maxLength": 254,
+          "minLength": 1
+        }
+      }
+    },
+    "SetPassword": {
+      "required": [
+        "new_password",
+        "current_password"
+      ],
+      "type": "object",
+      "properties": {
+        "new_password": {
+          "title": "New password",
+          "type": "string",
+          "minLength": 1
+        },
+        "current_password": {
+          "title": "Current password",
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "Invite": {
+      "required": [
+        "invite_object"
+      ],
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "ID",
+          "type": "integer",
+          "readOnly": true
+        },
+        "creator": {
+          "title": "Creator",
+          "type": "string",
+          "readOnly": true
+        },
+        "room": {
+          "title": "Room",
+          "type": "string",
+          "readOnly": true
+        },
+        "is_accepted": {
+          "title": "\u041f\u0440\u0438\u043d\u044f\u0442\u043e",
+          "type": "boolean",
+          "x-nullable": true
+        },
+        "invite_object": {
+          "title": "\u041f\u0440\u0438\u0433\u043b\u0430\u0448\u0435\u043d\u0438\u0435 \u043a",
+          "type": "integer"
+        }
+      }
+    },
+    "InviteToMe": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "ID",
+          "type": "integer",
+          "readOnly": true
+        },
+        "creator": {
+          "title": "Creator",
+          "type": "string",
+          "readOnly": true
+        },
+        "room": {
+          "title": "Room",
+          "type": "string",
+          "readOnly": true
+        },
+        "invite_object": {
+          "title": "Invite object",
+          "type": "string",
+          "readOnly": true
+        },
+        "is_accepted": {
+          "title": "\u041f\u0440\u0438\u043d\u044f\u0442\u043e",
+          "type": "boolean",
+          "x-nullable": true
+        }
+      }
+    },
+    "RoomList": {
+      "required": [
+        "title",
+        "owner"
+      ],
+      "type": "object",
+      "properties": {
+        "title": {
+          "title": "\u041d\u0430\u0437\u0432\u0430\u043d\u0438\u0435",
+          "type": "string",
+          "maxLength": 128,
+          "minLength": 1
+        },
+        "slug": {
+          "title": "URL",
+          "type": "string",
+          "format": "slug",
+          "pattern": "^[-a-zA-Z0-9_]+$",
+          "maxLength": 128
+        },
+        "owner": {
+          "title": "\u0412\u043b\u0430\u0434\u0435\u043b\u0435\u0446",
+          "type": "integer"
+        },
+        "members_num": {
+          "title": "Members num",
+          "type": "string",
+          "readOnly": true
+        },
+        "members": {
+          "type": "array",
+          "items": {
+            "title": "\u0423\u0447\u0430\u0441\u0442\u043d\u0438\u043a\u0438",
+            "type": "integer"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "RoomDetail": {
+      "required": [
+        "title"
+      ],
+      "type": "object",
+      "properties": {
+        "title": {
+          "title": "\u041d\u0430\u0437\u0432\u0430\u043d\u0438\u0435",
+          "type": "string",
+          "maxLength": 128,
+          "minLength": 1
+        },
+        "slug": {
+          "title": "Slug",
+          "type": "string",
+          "format": "slug",
+          "pattern": "^[-a-zA-Z0-9_]+$"
+        },
+        "owner": {
+          "title": "Owner",
+          "type": "integer",
+          "readOnly": true
+        },
+        "created_at": {
+          "title": "Created at",
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        },
+        "members_num": {
+          "title": "Members num",
+          "type": "string",
+          "readOnly": true
+        },
+        "members": {
+          "type": "array",
+          "items": {
+            "title": "\u0423\u0447\u0430\u0441\u0442\u043d\u0438\u043a\u0438",
+            "type": "integer"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "FriendshipRelationList": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "ID",
+          "type": "integer",
+          "readOnly": true
+        },
+        "creator": {
+          "title": "Creator",
+          "type": "string",
+          "readOnly": true
+        },
+        "friend_object": {
+          "title": "Friend object",
+          "type": "string",
+          "readOnly": true
+        },
+        "is_accepted": {
+          "title": "\u041f\u0440\u0438\u043d\u044f\u0442\u043e",
+          "type": "boolean",
+          "x-nullable": true
+        }
+      }
+    },
+    "ProfileList": {
+      "required": [
+        "username"
+      ],
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "title": "User id",
+          "type": "string",
+          "readOnly": true
+        },
+        "avatar": {
+          "title": "\u0410\u0432\u0430\u0442\u0430\u0440",
+          "type": "string",
+          "readOnly": true,
+          "x-nullable": true,
+          "format": "uri"
+        },
+        "username": {
+          "title": "\u041d\u0438\u043a\u043d\u0435\u0439\u043c",
+          "type": "string",
+          "maxLength": 128,
+          "minLength": 1
+        }
+      }
+    },
+    "ProfileDetail": {
+      "required": [
+        "username"
+      ],
+      "type": "object",
+      "properties": {
+        "user": {
+          "title": "User",
+          "type": "string",
+          "readOnly": true
+        },
+        "friends": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "readOnly": true,
+          "uniqueItems": true
+        },
+        "username": {
+          "title": "\u041d\u0438\u043a\u043d\u0435\u0439\u043c",
+          "type": "string",
+          "maxLength": 128,
+          "minLength": 1
+        },
+        "avatar": {
+          "title": "\u0410\u0432\u0430\u0442\u0430\u0440",
+          "type": "string",
+          "readOnly": true,
+          "x-nullable": true,
+          "format": "uri"
+        },
+        "description": {
+          "title": "\u041e \u0441\u0435\u0431\u0435",
+          "type": "string"
+        },
+        "first_name": {
+          "title": "\u0418\u043c\u044f",
+          "type": "string",
+          "maxLength": 128
+        },
+        "last_name": {
+          "title": "\u0424\u0430\u043c\u0438\u043b\u0438\u044f",
+          "type": "string",
+          "maxLength": 128
+        },
+        "birth_date": {
+          "title": "\u0414\u0430\u0442\u0430 \u0440\u043e\u0436\u0434\u0435\u043d\u0438\u044f",
+          "type": "string",
+          "format": "date",
+          "x-nullable": true
+        },
+        "location": {
+          "title": "\u041c\u0435\u0441\u0442\u043e\u043f\u043e\u043b\u043e\u0436\u0435\u043d\u0438\u0435",
+          "type": "string",
+          "maxLength": 128
+        }
+      }
+    }
+  }
+}

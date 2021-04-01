@@ -4,6 +4,7 @@ from rest_framework import status
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
+from chatroom_project.settings import EMAIL_HOST_USER
 from user_profile.models import FriendshipRelation
 
 
@@ -42,8 +43,9 @@ def friend_request_handler(friend_request):
         friend_request.creator.profile.friends.add(friend_request.friend_object)
 
         # Отправка оповещения на почту
-        # send_accept_notification_task.delay(friend_request.creator.email,
-        #                                     friend_request.friend_object.profile.username)
+        if EMAIL_HOST_USER:
+            send_accept_notification_task.delay(friend_request.creator.email,
+                                                friend_request.friend_object.profile.username)
         friend_request.delete()
     elif friend_request.is_accepted is False:
         # Если запрос отклонен, экземпляр запроса просто удаляется
@@ -71,5 +73,3 @@ def friend_delete_handler(request_user, user_obj):
     """Функция для обработки запроса на удаление друга."""
     request_user.profile.friends.remove(user_obj)
     user_obj.profile.friends.remove(request_user)
-
-

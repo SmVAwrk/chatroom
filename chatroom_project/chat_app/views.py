@@ -17,6 +17,7 @@ from chat_app.serializers import (
 )
 from chat_app.services import invite_handler, get_emails, message_filter
 from chat_app.tasks import send_invite_notification_task
+from chatroom_project.settings import EMAIL_HOST_USER
 
 
 class RoomViewSet(ModelViewSet):
@@ -63,8 +64,9 @@ class InviteView(APIView):
         serializer.save(room=room, creator=request.user)
 
         # Отправка оповещений на почту
-        emails = get_emails(serializer.data)
-        # send_invite_notification_task.delay(emails, request.user.profile.username, room.title)
+        if EMAIL_HOST_USER:
+            emails = get_emails(serializer.data)
+            send_invite_notification_task.delay(emails, request.user.profile.username, room.title)
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -118,8 +120,8 @@ class LazyLoadMessagesView(APIView):
             status=status.HTTP_200_OK
         )
 
-def chat_view(request, room_slug):
-    """Представление-функция для отладки WS."""
-    return render(request, 'chat_app/my_chat.html', context={
-        'room_slug': room_slug
-    })
+# def chat_view(request, room_slug):
+#     """Представление-функция для отладки WS."""
+#     return render(request, 'chat_app/my_chat.html', context={
+#         'room_slug': room_slug
+#     })
